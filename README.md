@@ -4,7 +4,18 @@
 
 TULA is an AI safety layer for automated toll billing. For every vehicle it decides **charge**, **hold**, or **send to a human**, and it keeps the wrong-charge rate under a target that can be proven with conformal risk control. It is being built for the Meta Global AI Developer Hackathon (26 Oct to 4 Nov 2026, Indie track, solo), and it continues whether or not the application is accepted.
 
-Blueprint: https://claude.ai/artifact/JusUMwS43g65brXWY3kacS
+**Status (25 Oct 2026):** early build. Reader B (Muse Spark plate read as JSON) is in place; everything else is still design. The full design and planned evaluation are in the whitepaper: [docs/WHITEPAPER.md](docs/WHITEPAPER.md) ([PDF](docs/TULA-Whitepaper.pdf)).
+
+## Quickstart
+
+```bash
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+cp .env.example .env        # then paste your own Meta Model API key into .env
+PYTHONPATH=src .venv/bin/python -m tula.read_plate data/samples/synthetic_plate.png
+PYTHONPATH=src .venv/bin/python -m unittest discover -s tests   # offline tests, no key needed
+```
+
+The read prints as JSON (plate text, confidence, plate style, state, vehicle type, make, colour, image issues) and a receipt is saved in `experiments/receipts/`. The sample plate is drawn by `tools/make_sample_plate.py` and belongs to no real vehicle.
 
 ## Pipeline
 
@@ -23,7 +34,9 @@ Blueprint: https://claude.ai/artifact/JusUMwS43g65brXWY3kacS
 | `data/raw/` | Downloaded public plate datasets (not committed) |
 | `data/synthetic/` | Simulated FASTag, registry and billing layers |
 | `experiments/` | Runs, metrics and receipts |
-| `docs/` | Project brief, write-up, figures, demo script |
+| `docs/` | Project brief, whitepaper, figures, demo script |
+| `tests/` | Offline tests |
+| `tools/` | Small helper scripts |
 
 ## Datasets
 
@@ -34,3 +47,5 @@ Blueprint: https://claude.ai/artifact/JusUMwS43g65brXWY3kacS
 ## Metrics
 
 Wrong-charge rate (bounded), automation rate, human review load, worst-group gap, and guarantee survival under attack.
+
+Owner: Suryansh Pratap Singh
