@@ -1,0 +1,92 @@
+{
+  "alpha": 0.01,
+  "audit_rate": 0.03,
+  "rounds": 6,
+  "per_round": 30000,
+  "history": [
+    {
+      "round": 1,
+      "clone_rate": 0.02,
+      "naive": {
+        "true_wrong_rate": 0.004633333333333333,
+        "believed_wrong_rate": 0.0024,
+        "automation_rate": 0.7501666666666666
+      },
+      "tula": {
+        "true_wrong_rate": 0.004633333333333333,
+        "believed_wrong_rate": 0.005512679162072767,
+        "automation_rate": 0.7501666666666666
+      }
+    },
+    {
+      "round": 2,
+      "clone_rate": 0.02486583184257603,
+      "naive": {
+        "true_wrong_rate": 0.02263333333333333,
+        "believed_wrong_rate": 0.0118,
+        "automation_rate": 0.8160666666666667
+      },
+      "tula": {
+        "true_wrong_rate": 0.0047,
+        "believed_wrong_rate": 0.00536480686695279,
+        "automation_rate": 0.7602666666666666
+      }
+    },
+    {
+      "round": 3,
+      "clone_rate": 0.06323213513468805,
+      "naive": {
+        "true_wrong_rate": 0.02266666666666667,
+        "believed_wrong_rate": 0.0113,
+        "automation_rate": 0.7847333333333333
+      },
+      "tula": {
+        "true_wrong_rate": 0.0067666666666666665,
+        "believed_wrong_rate": 0.006896551724137931,
+        "automation_rate": 0.7531
+      }
+    },
+    {
+      "round": 4,
+      "clone_rate": 0.11254190315354094,
+      "naive": {
+        "true_wrong_rate": 0.025666666666666667,
+        "believed_wrong_rate": 0.010966666666666666,
+        "automation_rate": 0.7563
+      },
+      "tula": {
+        "true_wrong_rate": 0.008466666666666667,
+        "believed_wrong_rate": 0.006726457399103139,
+        "automation_rate": 0.7201333333333333
+      }
+    },
+    {
+      "round": 5,
+      "clone_rate": 0.15,
+      "naive": {
+        "true_wrong_rate": 0.028033333333333334,
+        "believed_wrong_rate": 0.011233333333333333,
+        "automation_rate": 0.7404
+      },
+      "tula": {
+        "true_wrong_rate": 0.011366666666666667,
+        "believed_wrong_rate": 0.017316017316017316,
+        "automation_rate": 0.6901666666666667
+      }
+    },
+    {
+      "round": 6,
+      "clone_rate": 0.15,
+      "naive": {
+        "true_wrong_rate": 0.024233333333333332,
+        "believed_wrong_rate": 0.0105,
+        "automation_rate": 0.7426666666666667
+      },
+      "tula": {
+        "true_wrong_rate": 0.008866666666666667,
+        "believed_wrong_rate": 0.007675438596491228,
+        "automation_rate": 0.6885
+      }
+    }
+  ]
+}
