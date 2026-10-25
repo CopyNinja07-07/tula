@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TULA plate checker</title>
+<style>
+  :root { --bg:#f6f5f2; --fg:#1d1d1b; --muted:#6b6a65; --card:#fff; --line:#dedcd6; --accent:#2f5d8a; --ok:#2e7d4f; --warn:#a15c00; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#171716; --fg:#ecebe7; --muted:#a3a29c; --card:#222220; --line:#3a3936; --accent:#7fb0e0; --ok:#6cc08f; --warn:#e0a85a; } }
+  * { box-sizing: border-box; }
+  body { margin:0; font:16px/1.45 -apple-system, system-ui, sans-serif; background:var(--bg); color:var(--fg); }
+  main { max-width: 980px; margin: 0 auto; padding: 16px; }
+  header { display:flex; flex-wrap:wrap; gap:12px; align-items:baseline; justify-content:space-between; }
+  h1 { font-size: 20px; margin: 0; }
+  .muted { color: var(--muted); font-size: 14px; }
+  .bar { height:6px; background:var(--line); border-radius:3px; overflow:hidden; margin:12px 0 16px; }
+  .bar div { height:100%; background:var(--ok); width:0; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; }
+  .crop { width:100%; max-height:200px; object-fit:contain; background:#000; border-radius:6px; image-rendering: auto; }
+  .photo { width:100%; max-height:420px; object-fit:contain; border-radius:6px; margin-top:12px; }
+  .row { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; align-items:center; }
+  input[type=text] { flex:1 1 260px; font:600 26px/1.2 ui-monospace, Menlo, monospace; letter-spacing:2px; padding:10px 12px; border:2px solid var(--line); border-radius:8px; background:var(--bg); color:var(--fg); text-transform:uppercase; }
+  input[type=text]:focus { outline:none; border-color:var(--accent); }
+  button { font:inherit; padding:10px 14px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--fg); cursor:pointer; }
+  button.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .keys { margin-top:12px; font-size:14px; color:var(--muted); }
+  kbd { font: 12px ui-monospace, Menlo, monospace; border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; padding:1px 5px; }
+  .tag { font-size:13px; padding:2px 8px; border-radius:10px; border:1px solid var(--line); }
+  .done { color: var(--ok); } .skip { color: var(--warn); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>TULA plate checker</h1>
+    <span class="muted" id="count"></span>
+  </header>
+  <div class="bar"><div id="progress"></div></div>
+  <div class="card" id="card"></div>
+  <div class="row">
+    <button onclick="move(-1)">← Back</button>
+    <button onclick="move(1)">Next →</button>
+    <button onclick="jumpNext()">Next unchecked</button>
+    <span style="flex:1"></span>
+    <button class="primary" onclick="exportCsv()">Save labels (CSV)</button>
+  </div>
+  <p class="keys"><kbd>Enter</kbd> save and next · <kbd>Esc</kbd> can't read it · <kbd>Alt</kbd>+<kbd>←</kbd>/<kbd>→</kbd> move · Progress saves in this browser automatically; press <b>Save labels</b> to download <code>labels.csv</code> and put it next to this page.</p>
+</main>
+<script>
+const ROWS = /*ROWS*/[];
+const KEY = "tula-foggy-labels-v1";
+let labels = {};
+try { labels = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { labels = {}; }
+let i = 0;
+try { i = Math.min(ROWS.length - 1, parseInt(localStorage.getItem(KEY + "-pos") || "0", 10) || 0); } catch (e) {}
+
+function persist() {
+  try { localStorage.setItem(KEY, JSON.stringify(labels)); localStorage.setItem(KEY + "-pos", String(i)); } catch (e) {}
+}
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+function render() {
+  const r = ROWS[i], l = labels[r.id];
+  const done = Object.keys(labels).length;
+  document.getElementById("count").textContent = `${i + 1} of ${ROWS.length} · ${done} checked`;
+  document.getElementById("progress").style.width = (100 * done / ROWS.length) + "%";
+  const status = l ? (l.unreadable ? '<span class="tag skip">marked unreadable</span>' : '<span class="tag done">checked</span>') : '';
+  const pre = r.pre_read ? `Reader A guessed <b>${esc(r.pre_read)}</b> (confidence ${r.pre_conf})` : "No plate found automatically. Read it from the full photo.";
+  document.getElementById("card").innerHTML = `
+    <div class="row" style="margin-top:0"><b>Photo ${esc(r.id)}</b> ${status}</div>
+    ${r.crop ? `<img class="crop" src="${esc(r.crop)}" alt="plate crop">` : ""}
+    <p class="muted">${pre}</p>
+    <div class="row">
+      <input id="plate" type="text" autocomplete="off" spellcheck="false" value="${esc(l ? (l.plate || "") : (r.pre_read || ""))}" placeholder="e.g. RJ14AB1234">
+    </div>
+    <img class="photo" src="${esc(r.photo)}" alt="full photo">`;
+  const box = document.getElementById("plate");
+  box.focus(); box.select();
+  persist();
+}
+function save(unreadable) {
+  const v = document.getElementById("plate").value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  labels[ROWS[i].id] = unreadable ? { plate: "", unreadable: true } : { plate: v, unreadable: false };
+  move(1);
+}
+function move(d) { i = Math.max(0, Math.min(ROWS.length - 1, i + d)); render(); }
+function jumpNext() {
+  for (let k = 1; k <= ROWS.length; k++) { const j = (i + k) % ROWS.length; if (!labels[ROWS[j].id]) { i = j; break; } }
+  render();
+}
+function exportCsv() {
+  const lines = ["id,plate,unreadable,pre_read"];
+  for (const r of ROWS) { const l = labels[r.id]; if (l) lines.push([r.id, l.plate, l.unreadable, r.pre_read].join(",")); }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([lines.join("\n") + "\n"], { type: "text/csv" }));
+  a.download = "labels.csv"; a.click();
+}
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter") { e.preventDefault(); save(false); }
+  else if (e.key === "Escape") { e.preventDefault(); save(true); }
+  else if (e.altKey && e.key === "ArrowRight") move(1);
+  else if (e.altKey && e.key === "ArrowLeft") move(-1);
+});
+if (ROWS.length) render(); else document.getElementById("card").textContent = "No photos loaded. Run tools/prelabel_foggy.py first.";
+</script>
+</body>
+</html>
