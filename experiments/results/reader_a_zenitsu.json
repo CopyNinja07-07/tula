@@ -1,0 +1,25 @@
+{
+  "model": "cct-s-v2-global-model",
+  "images": 1684,
+  "exact_match": 0.31116389548693585,
+  "char_error_rate": 0.2253920427553444,
+  "confident_reads": 313,
+  "confident_but_wrong": 69,
+  "by_size": {
+    "large (200px+)": {
+      "images": 494,
+      "exact_match": 0.4898785425101215,
+      "char_error_rate": 0.14494306862727932
+    },
+    "small (100-200px)": {
+      "images": 519,
+      "exact_match": 0.3699421965317919,
+      "char_error_rate": 0.21370983437457422
+    },
+    "tiny (<100px)": {
+      "images": 671,
+      "exact_match": 0.13412816691505217,
+      "char_error_rate": 0.2936617075588765
+    }
+  }
+}
