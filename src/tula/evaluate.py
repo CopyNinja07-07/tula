@@ -25,10 +25,11 @@ ROOT = Path(__file__).resolve().parents[2]
 VTYPES = sorted(MAKES)
 
 
-def build_cases(n_vehicles: int, n_passages: int, seed: int) -> list[dict]:
+def build_cases(n_vehicles: int, n_passages: int, seed: int, rates: dict | None = None,
+                vehicles: list | None = None) -> list[dict]:
     rng = random.Random(seed)
-    vehicles = make_registry(n_vehicles, rng)
-    passages = make_passages(vehicles, n_passages, rng)
+    vehicles = vehicles or make_registry(n_vehicles, rng)
+    passages = make_passages(vehicles, n_passages, rng, rates)
     by_id = {v.vehicle_id: v for v in vehicles}
     by_tag = {v.tag_id: v for v in vehicles}
     by_plate = {v.plate: v for v in vehicles}

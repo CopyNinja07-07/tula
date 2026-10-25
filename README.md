@@ -15,6 +15,8 @@ PYTHONPATH=src .venv/bin/python -m tula.read_plate data/samples/synthetic_plate.
 PYTHONPATH=src .venv/bin/python -m tula.simulate                 # simulated FASTag, registry and passages
 PYTHONPATH=src .venv/bin/python -m tula.reader_a                 # Reader A (open OCR) on 1,684 labelled Indian plates
 PYTHONPATH=src .venv/bin/python -m tula.evaluate                 # full simulated benchmark, prints the results table
+PYTHONPATH=src .venv/bin/python -m tula.audit                    # human review budget vs promised wrong-charge rate
+PYTHONPATH=src .venv/bin/python -m tula.feedback                 # recursive loop: learning from disputes, naive vs TULA
 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests   # offline tests, no key needed
 ```
 
