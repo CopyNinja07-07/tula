@@ -1,0 +1,26 @@
+{
+  "model": "cct-s-v2-global-model",
+  "dataset": "vietnam",
+  "images": 2921,
+  "exact_match": 0.968503937007874,
+  "char_error_rate": 0.007151249572064361,
+  "confident_reads": 2825,
+  "confident_but_wrong": 24,
+  "by_size": {
+    "large (200px+)": {
+      "images": 4,
+      "exact_match": 0.5,
+      "char_error_rate": 0.05555555555555555
+    },
+    "small (100-200px)": {
+      "images": 1706,
+      "exact_match": 0.9917936694021102,
+      "char_error_rate": 0.0012211801484955061
+    },
+    "tiny (<100px)": {
+      "images": 1211,
+      "exact_match": 0.9372419488026424,
+      "char_error_rate": 0.01534544453619598
+    }
+  }
+}

@@ -3,7 +3,8 @@
 Uses fast-plate-ocr (open source, ONNX, runs on the Mac CPU). It never sees
 Reader B's answer or the registry (whitepaper Section 3.1).
 
-    python -m tula.reader_a                # measure on the labelled Indian plates
+    python -m tula.reader_a                      # labelled Indian plates
+    python -m tula.reader_a --dataset vietnam    # labelled Vietnamese plates
 """
 from __future__ import annotations
 
@@ -22,6 +23,8 @@ from tula.evidence import edit_distance
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_MODEL = "cct-s-v2-global-model"
 LABELLED = ROOT / "data" / "raw" / "zenitsu09_indian_number_plate" / "train.parquet"
+VIETNAM = ROOT / "data" / "raw" / "sonnetechnology_plate_text"
+VN_SINGLE_LINE = re.compile(r"\d{2}[A-Z]{1,2}\d?-\d{3}\.?\d{2}")
 
 
 class ReaderA:
@@ -59,13 +62,35 @@ def load_labelled(path: Path = LABELLED) -> list[dict]:
     return rows
 
 
+def load_vietnam(folder: Path = VIETNAM) -> list[dict]:
+    """Single-line Vietnamese plates (CC BY 4.0). The set also labels other text, which we skip."""
+    import pyarrow.parquet as pq
+    rows = []
+    for split in ("train", "validation", "test"):
+        t = pq.read_table(folder / f"{split}.parquet").to_pydict()
+        for i, targets in enumerate(t["target"]):
+            img = None
+            for k, (text, box) in enumerate(zip(targets, t["bbox"][i])):
+                if not VN_SINGLE_LINE.fullmatch(text):
+                    continue
+                img = img or Image.open(io.BytesIO(t["image"][i]["bytes"])).convert("RGB")
+                x0, y0, x1, y1 = box
+                rows.append({"id": f"{split}-{t['image_id'][i]}-{k}", "image": img.crop((x0, y0, x1, y1)),
+                             "truth": re.sub(r"[^A-Z0-9]", "", text)})
+    return rows
+
+
+DATASETS = {"india": load_labelled, "vietnam": load_vietnam}
+
+
 def size_bucket(img: Image.Image) -> str:
     w = img.size[0]
     return "tiny (<100px)" if w < 100 else "small (100-200px)" if w < 200 else "large (200px+)"
 
 
-def measure(model: str = DEFAULT_MODEL, out_dir: Path = ROOT / "experiments" / "results") -> dict:
-    reader, rows = ReaderA(model), load_labelled()
+def measure(model: str = DEFAULT_MODEL, dataset: str = "india",
+            out_dir: Path = ROOT / "experiments" / "results") -> dict:
+    reader, rows = ReaderA(model), DATASETS[dataset]()
     per_image, buckets = [], defaultdict(lambda: [0, 0, 0.0])
     for r in rows:
         got = reader.read(r["image"])
@@ -84,15 +109,16 @@ def measure(model: str = DEFAULT_MODEL, out_dir: Path = ROOT / "experiments" / "
     # Is confidence honest? Accuracy among reads the model was >= 0.9 sure about.
     sure = [p for p in per_image if p["confidence"] >= 0.9]
     report = {
-        "model": model, "images": n, "exact_match": exact / n,
+        "model": model, "dataset": dataset, "images": n, "exact_match": exact / n,
         "char_error_rate": sum(p["cer"] for p in per_image) / n,
         "confident_reads": len(sure), "confident_but_wrong": sum(not p["exact"] for p in sure),
         "by_size": {b: {"images": m, "exact_match": k / m, "char_error_rate": c / m}
                     for b, (m, k, c) in sorted(buckets.items())},
     }
     out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / "reader_a_zenitsu.json").write_text(json.dumps(report, indent=2) + "\n")
-    with (out_dir / "reader_a_zenitsu_reads.csv").open("w") as f:
+    stem = "reader_a_zenitsu" if dataset == "india" else f"reader_a_{dataset}"
+    (out_dir / f"{stem}.json").write_text(json.dumps(report, indent=2) + "\n")
+    with (out_dir / f"{stem}_reads.csv").open("w") as f:
         f.write("id,truth,read,confidence,exact,cer,size\n")
         for p in per_image:
             f.write(",".join(str(p[k]) for k in ("id", "truth", "read", "confidence", "exact", "cer", "size")) + "\n")
@@ -100,10 +126,11 @@ def measure(model: str = DEFAULT_MODEL, out_dir: Path = ROOT / "experiments" / "
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description="Measure Reader A on labelled Indian plates.")
+    ap = argparse.ArgumentParser(description="Measure Reader A on labelled plates (India or Vietnam).")
     ap.add_argument("--model", default=DEFAULT_MODEL)
+    ap.add_argument("--dataset", default="india", choices=sorted(DATASETS))
     args = ap.parse_args(argv)
-    print(json.dumps(measure(args.model), indent=2))
+    print(json.dumps(measure(args.model, args.dataset), indent=2))
     return 0
 
 
