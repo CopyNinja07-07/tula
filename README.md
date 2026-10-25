@@ -9,10 +9,11 @@ TULA is an AI safety layer for automated toll billing. For every vehicle it deci
 ## Quickstart
 
 ```bash
-python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -r requirements.txt   # needs Python 3.10+
 cp .env.example .env        # then paste your own Meta Model API key into .env
 PYTHONPATH=src .venv/bin/python -m tula.read_plate data/samples/synthetic_plate.png
 PYTHONPATH=src .venv/bin/python -m tula.simulate                 # simulated FASTag, registry and passages
+PYTHONPATH=src .venv/bin/python -m tula.reader_a                 # Reader A (open OCR) on 1,684 labelled Indian plates
 PYTHONPATH=src .venv/bin/python -m tula.evaluate                 # full simulated benchmark, prints the results table
 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests   # offline tests, no key needed
 ```
