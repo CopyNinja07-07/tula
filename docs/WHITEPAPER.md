@@ -174,7 +174,7 @@ The safest wording is "to our knowledge, the first", and only after we repeat th
 | Indian plates with plate text | Hugging Face `zenitsu09/indian-number-plate` (1,684 unique photos, 965 plates; licence not stated) | Downloaded, used for Reader A |
 | Foggy and hazy Indian plates | Foggy-Hazy License Plates, Mendeley (1,001 photos with clear versions, CC BY 4.0) | Downloaded; plate text being hand-labelled |
 | Plate locations | Kaggle "Indian License Plates with Labels" (2,083 photos, boxes only) | Downloaded |
-| A second country | Public plate set from outside India | To choose |
+| Vietnamese plates with text | Hugging Face `sonnetechnology/license-plate-text-recognition-full` (8,823 photos, CC BY 4.0; 2,921 clean single-line plate labels used) | Downloaded, used for Reader A |
 | Tag, registry, billing | Simulated, with tag misreads, swaps, clones and wrong classes | Built |
 
 The Indian Licence Plate Dataset in the wild (16,192 images), named in version 1, is not public: its authors write that it cannot be released "because of legalities involved in making Indian Road data public". IEEE DataPort's Indian LPR set needs a paid subscription.
@@ -216,6 +216,8 @@ Hypothesis 1 holds in the high-probability mode. In the average-case mode, singl
 ### 7.2 Reader A on real photos (hypothesis 7)
 
 fast-plate-ocr `cct-s-v2-global` on 1,684 labelled Indian plate photos: **31% exact reads**, 22.5% character error rate (49% exact on crops 200 px or wider, 13% on crops under 100 px). Of the 313 reads it was at least 90% sure of, **69 were wrong (22%)**. A billing system that trusts that confidence would charge the wrong person on those plates. This supports hypothesis 7 and is the direct case for calibrating on outcomes instead of trusting confidence.
+
+The same model on 2,921 Vietnamese plates (real photos): **96.9% exact reads**, 0.7% character error rate, and only 24 of 2,825 confident reads wrong (0.8%). One "global" plate reader is three times more accurate in one country than in another. A single worldwide threshold would therefore be far less safe for Indian drivers than for Vietnamese ones, which is the case for calibrating per region. Caveat: the model may have seen Vietnamese plates in training, so part of the gap may be training-data overlap rather than plate difficulty; we have not checked its training data yet.
 
 ### 7.3 The human review budget (Section 3.6)
 
