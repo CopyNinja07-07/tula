@@ -77,6 +77,7 @@ class Passage:
     true_vehicle_id: str       # the car physically passing
     shown_plate: str           # plate on the car (differs from its own when cloned)
     tag_read: str | None       # tag id the reader picked up, None if not read
+    tag_class: str | None      # toll class the tag reports (wrong in wrong_class)
     correct_account: str       # vehicle_id that should pay
     correct_fee: int
     naive_account: str | None  # who a tag-first, plate-fallback biller charges
@@ -146,8 +147,10 @@ def make_passages(vehicles: list[Vehicle], n: int, rng: random.Random,
         if tag_read is not None:
             naive = by_tag[tag_read]
             naive_account = naive.vehicle_id
-            naive_fee = TOLL_CLASSES[tag_class if naive is car else naive.tag_class]["fee"]
+            tag_class = tag_class if naive is car else naive.tag_class
+            naive_fee = TOLL_CLASSES[tag_class]["fee"]
         else:
+            tag_class = None
             naive = by_plate.get(shown_plate)
             naive_account = naive.vehicle_id if naive else None
             naive_fee = TOLL_CLASSES[naive.toll_class]["fee"] if naive else None
@@ -156,7 +159,7 @@ def make_passages(vehicles: list[Vehicle], n: int, rng: random.Random,
         out.append(Passage(
             passage_id=f"P{i:07d}", plaza=f"PLAZA{rng.randrange(plazas) + 1}",
             time_of_day=pick(rng, TIME_OF_DAY), weather=pick(rng, WEATHER), scenario=scenario,
-            true_vehicle_id=car.vehicle_id, shown_plate=shown_plate, tag_read=tag_read,
+            true_vehicle_id=car.vehicle_id, shown_plate=shown_plate, tag_read=tag_read, tag_class=tag_class,
             correct_account=car.vehicle_id, correct_fee=correct_fee,
             naive_account=naive_account, naive_fee=naive_fee, naive_wrong_charge=wrong,
         ))

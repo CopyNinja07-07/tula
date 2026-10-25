@@ -1,0 +1,117 @@
+{
+  "seed": 26,
+  "alpha": 0.005,
+  "delta": 0.1,
+  "passages": 120000,
+  "vehicles": 20000,
+  "fit": 24162,
+  "calibration": 47931,
+  "test": 47907,
+  "min_group_size_to_certify": 199,
+  "certified_groups": 20,
+  "groups": 24,
+  "uncertified": [
+    "hand_painted/day/fog",
+    "hand_painted/night/fog",
+    "hand_painted/night/rain",
+    "two_line/night/fog"
+  ],
+  "results": [
+    {
+      "method": "naive biller (today)",
+      "wrong_charge_rate": 0.061911620431252215,
+      "automation_rate": 1.0,
+      "hold_rate": 0.0,
+      "review_rate": 0.0,
+      "wrong_charges": 2966,
+      "worst_group": "two_line/night/rain",
+      "worst_group_rate": 0.07391304347826087,
+      "groups_over_alpha": 24,
+      "groups": 24
+    },
+    {
+      "method": "single threshold (0.9)",
+      "wrong_charge_rate": 0.04231114450915315,
+      "automation_rate": 0.6757467593462333,
+      "hold_rate": 0.0,
+      "review_rate": 0.32425324065376665,
+      "wrong_charges": 2027,
+      "worst_group": "high_security/day/fog",
+      "worst_group_rate": 0.054760423148724334,
+      "groups_over_alpha": 12,
+      "groups": 24
+    },
+    {
+      "method": "fused, fixed cut-off",
+      "wrong_charge_rate": 0.012962615066691715,
+      "automation_rate": 0.9050660655019099,
+      "hold_rate": 0.0,
+      "review_rate": 0.09493393449809005,
+      "wrong_charges": 621,
+      "worst_group": "high_security/day/rain",
+      "worst_group_rate": 0.020466786355475764,
+      "groups_over_alpha": 15,
+      "groups": 24
+    },
+    {
+      "method": "OCR only + controller",
+      "wrong_charge_rate": 0.004425240570271568,
+      "automation_rate": 0.29342267309578973,
+      "hold_rate": 0.6400943494687624,
+      "review_rate": 0.06648297743544784,
+      "wrong_charges": 212,
+      "worst_group": "two_line/day/rain",
+      "worst_group_rate": 0.009009009009009009,
+      "groups_over_alpha": 7,
+      "groups": 24
+    },
+    {
+      "method": "Muse only + controller",
+      "wrong_charge_rate": 0.004738347214394556,
+      "automation_rate": 0.8923330619742418,
+      "hold_rate": 0.05890579664767153,
+      "review_rate": 0.04876114137808671,
+      "wrong_charges": 227,
+      "worst_group": "two_line/day/fog",
+      "worst_group_rate": 0.011406844106463879,
+      "groups_over_alpha": 6,
+      "groups": 24
+    },
+    {
+      "method": "TULA, hand-set score",
+      "wrong_charge_rate": 0.005260191621266203,
+      "automation_rate": 0.8733379255641138,
+      "hold_rate": 0.07570918654893857,
+      "review_rate": 0.05095288788694763,
+      "wrong_charges": 252,
+      "worst_group": "high_security/day/rain",
+      "worst_group_rate": 0.010053859964093357,
+      "groups_over_alpha": 9,
+      "groups": 24
+    },
+    {
+      "method": "TULA (fused + controller)",
+      "wrong_charge_rate": 0.004613104556745361,
+      "automation_rate": 0.894316070720354,
+      "hold_rate": 0.0616193875634041,
+      "review_rate": 0.044064541716241884,
+      "wrong_charges": 221,
+      "worst_group": "high_security/day/rain",
+      "worst_group_rate": 0.010053859964093357,
+      "groups_over_alpha": 7,
+      "groups": 24
+    },
+    {
+      "method": "TULA, 90% confidence",
+      "wrong_charge_rate": 0.0029640762310309556,
+      "automation_rate": 0.8346379443505124,
+      "hold_rate": 0.11628780762727785,
+      "review_rate": 0.0490742480222097,
+      "wrong_charges": 142,
+      "worst_group": "high_security/day/rain",
+      "worst_group_rate": 0.005745062836624776,
+      "groups_over_alpha": 1,
+      "groups": 24
+    }
+  ]
+}
