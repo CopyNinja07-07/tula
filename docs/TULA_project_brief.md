@@ -18,14 +18,18 @@ India's NHAI is rolling out Multi-Lane Free Flow (MLFF) tolling: ANPR cameras pl
 4. Risk controller: conformal risk control (Angelopoulos et al., arXiv 2208.02814) with a cut-off per group (plate style, state, day/night, weather) so the wrong-charge rate stays under a target.
 5. Outcome: charge, hold, or human review, with an evidence note written by Muse Spark.
 6. Red team: cloned plates, tag swaps, edited or sticker-style images; report how much of the guarantee survives.
+7. Human review budget: for a given number of reviewers, the strictest wrong-charge promise that fits.
+8. Recursive loop (Suryansh's original angle, from the 22 Oct chat): the system keeps learning from its own decisions, but recalibrates only on a small random audit, never on disputes alone, because "no dispute" is not "correct".
+
+Original idea and comparison: ~/Desktop/Meta AI Hackathon/research/origin-chat-ai-safety-toll-systems.md and TULA-vs-original-idea.md. Scope is world-wide, not India-only.
 
 ## Novelty claim (keep it honest)
 Each piece exists alone: confidence thresholds in toll patents, probabilistic LPR, VLM plate readers (LP-LLM, BLPR), clone-plate detection (UK False Plate Classifier; NOT claimed as new), plate-reader attacks (GRAPHITE, SPAR), robust conformal prediction (Gendler ICLR 2022, Lip-RCP ICML 2025). No work found that combines them into billing with a provable, group-wise wrong-charge bound tested under attack, plus an open benchmark pairing tag reads, plates and billing outcomes. Say "to our knowledge"; re-run the search before claiming.
 
 ## Data
-Semi-synthetic benchmark: real plates from Indian Licence Plate Dataset in the wild (arXiv 2111.06054, 16,192 images), IEEE DataPort Indian LPR set, Foggy-Hazy plates (Mendeley, 1,001 images), augmented night/rain copies, plus simulated FASTag, registry and billing layers. Public data only; no real people's plates from own footage.
+Semi-synthetic benchmark: Foggy-Hazy plates (Mendeley, 1,001 photos, CC BY 4.0, plate text being hand-labelled by Suryansh), Indian plates with text (Hugging Face zenitsu09, 1,684 photos), Kaggle Indian plates (boxes only), a second country's public set (to choose), plus simulated FASTag, registry and billing layers. Public data only. ILPD (arXiv 2111.06054) is not public and IEEE DataPort needs a paid subscription, so neither is used.
 
-Metrics: wrong-charge rate (bounded), automation rate, human review load, worst-group gap, guarantee survival under attack. Baselines: single threshold, OCR only, Muse Spark only, fused without the risk controller.
+Metrics: wrong-charge rate (bounded), automation rate, human review load, worst-group gap, believed-vs-true error when learning from disputes, guarantee survival under attack. Baselines: single threshold, OCR only, Muse Spark only, fused without the risk controller.
 
 ## Hackathon facts
 - Build window: 26 Oct to 4 Nov 2026. Submit by 4 Nov, 9:00 PM ET (5 Nov, 6:30 AM IST) at cerebralvalley.ai/e/meta-ai-developer-hackathon/hackathon/submit.
@@ -33,6 +37,9 @@ Metrics: wrong-charge rate (bounded), automation rate, human review load, worst-
 - $150 Meta Model API credits per accepted participant (claim form in the acceptance email). Meta Model API base URL: https://api.meta.ai/v1. Models: Muse Spark, Muse Image, SAM 3.1, open-weight models (also on Modal, Baseten, Fireworks), Muse Code.
 - Application submitted 24 Oct; status Pending; acceptance emails by 26 Oct, 9:00 AM ET.
 - If not accepted: build anyway with Meta's open-weight models and other public tools.
+
+## Status (25 Oct)
+Built and pushed (github.com/CopyNinja07-07/tula): Muse Spark reader (waits for key), simulator, evidence check, per-group risk controller (two modes), review budget, recursive dispute loop, Reader A (31% exact on real Indian plates; 69 of 313 confident reads wrong), foggy-photo checking page. Whitepaper v2 has early results. Still to do: real-photo pipeline, Reader A fine-tune on Indian plates (GPU), Muse Spark and SAM 3.1 runs, second country, adaptive attacker, dashboard, demo video.
 
 ## Solo 10-day plan
 | Days | Goal | Done when |

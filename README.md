@@ -2,9 +2,9 @@
 
 *Tulā* (तुला) is the balance scale. Before an AI punishes someone, it should weigh the evidence. TULA is that scale.
 
-TULA is an AI safety layer for automated toll billing. For every vehicle it decides **charge**, **hold**, or **send to a human**, and it keeps the wrong-charge rate under a target that can be proven with conformal risk control. It is being built for the Meta Global AI Developer Hackathon (26 Oct to 4 Nov 2026, Indie track, solo), and it continues whether or not the application is accepted.
+TULA is an AI safety layer for automatic billing, with barrier-free tolling as the first testbed and no tie to one country. For every vehicle it decides **charge**, **hold**, or **send to a human**, and it keeps the wrong-charge rate under a target that can be proven with conformal risk control. It also sizes that promise to the number of human reviewers available, and keeps it while the system learns from its own past decisions. It is being built for the Meta Global AI Developer Hackathon (26 Oct to 4 Nov 2026, Indie track, solo), and it continues whether or not the application is accepted.
 
-**Status (25 Oct 2026):** early build. Reader B (Muse Spark plate read as JSON), the simulated FASTag, registry and billing layers, the evidence check and the per-group risk controller are in place and run end to end on simulated readers; everything else is still design. The full design and planned evaluation are in the whitepaper: [docs/WHITEPAPER.md](docs/WHITEPAPER.md) ([PDF](docs/TULA-Whitepaper.pdf)).
+**Status (25 Oct 2026):** working build. The risk controller (per group, two modes), evidence check, human review budget, the learning-from-disputes loop and the benchmark simulator run end to end on simulated traffic. Reader A (open plate OCR) is measured on 1,684 real Indian plates; Reader B (Muse Spark) is built and waits for API access. Design and early results: [docs/WHITEPAPER.md](docs/WHITEPAPER.md) ([PDF](docs/TULA-Whitepaper.pdf)).
 
 ## Quickstart
 
@@ -30,6 +30,8 @@ The read prints as JSON (plate text, confidence, plate style, state, vehicle typ
 4. **Risk controller**: conformal risk control with a cut-off for each group (plate style, state, day/night, weather).
 5. **Outcome**: charge, hold or human review, with an evidence note written by Muse Spark.
 6. **Red team**: cloned plates, tag swaps and edited images.
+7. **Review budget**: the strictest promise that fits the reviewers available.
+8. **Recursive loop**: recalibrate from a small random audit, never from disputes alone.
 
 ## Layout
 
@@ -45,12 +47,15 @@ The read prints as JSON (plate text, confidence, plate style, state, vehicle typ
 
 ## Datasets
 
-- Indian Licence Plate Dataset in the wild: https://arxiv.org/abs/2111.06054
-- Indian LPR (IEEE DataPort): https://ieee-dataport.org/documents/indian-license-plate-recognition-dataset-yolo-ocr
-- Foggy-Hazy License Plates (Mendeley): https://data.mendeley.com/datasets/p3jr4555tf
+- Foggy-Hazy License Plates (Mendeley, CC BY 4.0): https://data.mendeley.com/datasets/p3jr4555tf
+- Indian number plates with text (Hugging Face): https://huggingface.co/datasets/zenitsu09/indian-number-plate
+- Indian License Plates with Labels (Kaggle, boxes only): https://www.kaggle.com/datasets/kedarsai/indian-license-plates-with-labels
+- A second country's public plate set (to choose)
+
+Datasets are downloaded into `data/raw/` and never committed. The Indian Licence Plate Dataset in the wild (arXiv 2111.06054) is not public.
 
 ## Metrics
 
-Wrong-charge rate (bounded), automation rate, human review load, worst-group gap, and guarantee survival under attack.
+Wrong-charge rate (bounded), automation rate, human review load, worst-group gap, the believed-vs-true error gap when learning from disputes, and guarantee survival under attack.
 
 Owner: Suryansh Pratap Singh
