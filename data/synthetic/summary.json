@@ -1,0 +1,29 @@
+{
+  "seed": 26,
+  "vehicles": 5000,
+  "passages": 20000,
+  "naive_wrong_charges": 1203,
+  "naive_wrong_rate": 0.06015,
+  "by_scenario": {
+    "clean": {
+      "passages": 18042,
+      "naive_wrong": 0
+    },
+    "wrong_class": {
+      "passages": 287,
+      "naive_wrong": 287
+    },
+    "tag_swap": {
+      "passages": 500,
+      "naive_wrong": 500
+    },
+    "tag_missing": {
+      "passages": 755,
+      "naive_wrong": 0
+    },
+    "cloned_plate": {
+      "passages": 416,
+      "naive_wrong": 416
+    }
+  }
+}

@@ -4,3 +4,5 @@ __pycache__/
 *.pyc
 data/raw/
 .DS_Store
+data/synthetic/*.csv
+experiments/receipts/

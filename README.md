@@ -4,7 +4,7 @@
 
 TULA is an AI safety layer for automated toll billing. For every vehicle it decides **charge**, **hold**, or **send to a human**, and it keeps the wrong-charge rate under a target that can be proven with conformal risk control. It is being built for the Meta Global AI Developer Hackathon (26 Oct to 4 Nov 2026, Indie track, solo), and it continues whether or not the application is accepted.
 
-**Status (25 Oct 2026):** early build. Reader B (Muse Spark plate read as JSON) is in place; everything else is still design. The full design and planned evaluation are in the whitepaper: [docs/WHITEPAPER.md](docs/WHITEPAPER.md) ([PDF](docs/TULA-Whitepaper.pdf)).
+**Status (25 Oct 2026):** early build. Reader B (Muse Spark plate read as JSON) and the simulated FASTag, registry and billing layers are in place; everything else is still design. The full design and planned evaluation are in the whitepaper: [docs/WHITEPAPER.md](docs/WHITEPAPER.md) ([PDF](docs/TULA-Whitepaper.pdf)).
 
 ## Quickstart
 
@@ -12,6 +12,7 @@ TULA is an AI safety layer for automated toll billing. For every vehicle it deci
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 cp .env.example .env        # then paste your own Meta Model API key into .env
 PYTHONPATH=src .venv/bin/python -m tula.read_plate data/samples/synthetic_plate.png
+PYTHONPATH=src .venv/bin/python -m tula.simulate                 # simulated FASTag, registry and passages
 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests   # offline tests, no key needed
 ```
 
