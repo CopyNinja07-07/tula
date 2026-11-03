@@ -14,7 +14,7 @@ TULA checks automatic toll bills before they are sent, and keeps a written promi
 [![Tests](https://img.shields.io/badge/tests-25%20passing-10b981?style=flat-square&labelColor=06100c)](tests/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-93a99d?style=flat-square&labelColor=06100c)](LICENSE)
 
-**[🌐 Website](https://copyninja07-07.github.io/tula/)** · **[🎚️ Try it yourself](https://copyninja07-07.github.io/tula/#try)** · **[🚗 Toll desk](https://copyninja07-07.github.io/tula/demo/)** · **[📄 Whitepaper](docs/WHITEPAPER.md)** · **[📊 Every number](experiments/results/)**
+**[🌐 Website](https://copyninja07-07.github.io/tula/)** · **[🎚️ Demo 1 · Set the promise](https://copyninja07-07.github.io/tula/try/)** · **[🚗 Demo 2 · Follow one car](https://copyninja07-07.github.io/tula/demo/)** · **[📄 Whitepaper](docs/WHITEPAPER.md)** · **[📊 Every number](experiments/results/)**
 
 </div>
 
@@ -28,9 +28,9 @@ TULA was built solo for the **Meta Global AI Developer Hackathon 2026** (26 Octo
 
 | | What to open | What you will see |
 |---|---|---|
-| 1 | **[The website](https://copyninja07-07.github.io/tula/)**, top to bottom | The problem, how TULA works in four steps, and the results on 1,050 real photos |
-| 2 | **[Try it yourself](https://copyninja07-07.github.io/tula/#try)** | Move the slider to choose how many wrong bills you accept. TULA recalculates its decision line for each kind of photo, live, on the real scores. Then try the "90% sure" rule and watch it break in clear weather |
-| 3 | **[The toll desk](https://copyninja07-07.github.io/tula/demo/)** | Click real cars: the photo with SAM 3.1's boxes, both readers' answers, the evidence, TULA's decision and its written reason |
+| 1 | **[The website](https://copyninja07-07.github.io/tula/)**, top to bottom | The problem, how TULA works in four steps, the idea that makes it safe, and the results on 1,050 real photos |
+| 2 | **[Demo 1 · Set the promise](https://copyninja07-07.github.io/tula/try/)** | You run the toll road. Move the slider to choose how many wrong bills you accept; TULA redraws its decision line for fog, clear and Indian plates, live on the real scores. Then try a single "90% sure" rule and watch it break in clear weather |
+| 3 | **[Demo 2 · Follow one car](https://copyninja07-07.github.io/tula/demo/)** | Click a real car and follow every step: the photo with SAM 3.1's boxes, both readers' answers, the evidence, TULA's decision with its written reason, and what today's rule would have done |
 | 4 | **Reproduce the numbers** (no GPU, no API key, about 2 minutes) | `pip install -r requirements.txt` then `PYTHONPATH=src python -m tula.real_bench --alpha 0.05`. The model reads are saved in `experiments/results/`, so every table can be rebuilt on a laptop |
 
 ---
@@ -205,7 +205,7 @@ tests/           25 offline tests
 | [zenitsu09/indian-number-plate](https://huggingface.co/datasets/zenitsu09/indian-number-plate) | Indian plates with text (reads only; photos not shown) | Not stated by the uploader |
 | [sonnetechnology/license-plate-text-recognition-full](https://huggingface.co/datasets/sonnetechnology/license-plate-text-recognition-full) | Vietnamese plates, a second country for the OCR check | CC BY 4.0 |
 
-Models: Meta SAM 3.1 and Muse Glimmer 30B under Meta's licences (not redistributed); [fast-plate-ocr](https://github.com/ankandrew/fast-plate-ocr) as the open-source reader. Fonts: Bricolage Grotesque, Geist and Noto Serif Devanagari (SIL OFL). The website's toll desk shows small thumbnails of 19 CC BY photos, with credit.
+Models: Meta SAM 3.1 and Muse Glimmer 30B under Meta's licences (not redistributed); [fast-plate-ocr](https://github.com/ankandrew/fast-plate-ocr) as the open-source reader. Fonts: Bricolage Grotesque, Geist and Noto Serif Devanagari (SIL OFL). Demo 2 shows small thumbnails of 19 CC BY photos, with credit.
 
 **Prior work.** Every building block exists already: plate OCR, vision-language plate readers, conformal risk control, deferral to humans under a budget, audit-based error control (Gibbs, Han, Tibshirani and Zrnic, 2026). To our knowledge they have not been combined and measured for toll billing. Section 4 of the [whitepaper](docs/WHITEPAPER.md) says which parts are new and which are not.
 

@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TULA · Demo 1: set the promise</title>
+<meta name="description" content="Interactive demo: choose how many wrong toll bills you accept and watch TULA redraw its decision line for each kind of photo, live on real results.">
+<meta name="theme-color" content="#0d0f0e">
+<link rel="preload" href="../assets/fonts/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+header.page { padding-block: 88px 0; }
+.lab { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 32px; display: grid; gap: 28px; margin-top: 40px; }
+.lab > * { min-width: 0; }
+.controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 24px 32px; align-items: end; }
+.ctl label { display: block; font: 500 12px/1.3 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); margin-bottom: 8px; }
+.ctl output { font: 800 40px/1 var(--display); display: block; margin-bottom: 10px; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.seg button { font: inherit; font-size: 14.5px; padding: 9px 16px; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--surface-2); color: var(--ink); font-weight: 600; }
+select { font: inherit; font-size: 14.5px; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); }
+.try { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 14.5px; color: var(--faint); }
+.try button { font: inherit; font-size: 14px; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
+.try button:hover { border-color: var(--accent); }
+.summary { margin: 0; font-size: 18px; line-height: 1.6; padding: 20px 24px; border-radius: 14px; background: var(--surface-2); }
+.summary b { color: var(--accent); }
+.groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.g { border-top: 1px solid var(--line); padding-top: 20px; display: grid; gap: 14px; min-width: 0; }
+.g h3 { margin: 0; font-size: 19px; display: flex; justify-content: space-between; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.badge { font: 500 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 9px; border-radius: 999px; white-space: nowrap; }
+.badge.ok { color: var(--charge); background: color-mix(in srgb, var(--charge) 12%, transparent); }
+.badge.no { color: var(--review); background: color-mix(in srgb, var(--review) 12%, transparent); }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; font-variant-numeric: tabular-nums; }
+.stats div span { display: block; color: var(--faint); font-size: 12.5px; }
+.stats div b { font: 700 24px/1.2 var(--display); }
+.plain-line { margin: 0; font-size: 15px; color: var(--muted); }
+.plain-line b { color: var(--ink); }
+canvas { width: 100%; height: 120px; display: block; border-radius: 12px; background: var(--bg); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; color: var(--faint); }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
+.curious { border-top: 1px solid var(--line); padding-top: 14px; }
+.curious summary { cursor: pointer; color: var(--faint); font-size: 14.5px; }
+.formula { font: 14px/1.7 var(--mono); padding: 14px 16px; border-radius: 12px; background: var(--surface-2); overflow-x: auto; margin-top: 14px; }
+.note { margin: 12px 0 0; font-size: 14.5px; color: var(--muted); }
+.versus { display: grid; gap: 12px; }
+.vrow { display: grid; grid-template-columns: minmax(70px, 140px) minmax(0, 1fr) 56px; gap: 12px; align-items: center; font-size: 15px; font-variant-numeric: tabular-nums; }
+.track { position: relative; height: 14px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.track i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; transition: width .4s cubic-bezier(.2,.8,.2,1); }
+.track .promise { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--review); transition: left .35s; }
+.next { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 56px; }
+@media (prefers-reduced-motion: reduce) { .track i, .track .promise { transition: none; } }
+</style>
+</head>
+<body>
+<div class="bar"><div class="wrap">
+  <a class="logo" href="../" aria-label="TULA home"><svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#a3e635"/></linearGradient></defs><path d="M12 24h40M32 14v38M20 24l-8 14h16zM44 24l-8 14h16zM22 52h20" stroke="url(#lg)" stroke-width="4.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/></svg>TULA</a>
+  <nav aria-label="Pages"><a href="../">Home</a><a href="./" aria-current="page">Demo 1 · Set the promise</a><a href="../demo/">Demo 2 · Follow one car</a><a href="https://github.com/CopyNinja07-07/tula">Code</a></nav>
+</div></div>
+
+<main class="wrap">
+  <header class="page prose">
+    <p class="kicker">Demo 1 of 2</p>
+    <h1>Set the promise</h1>
+    <p class="lede">Pretend you run the toll road. Decide how many wrong bills you are willing to accept, and see what TULA does with real cars from fog, clear weather and Indian plates. Every number is recalculated in your browser when you move the slider.</p>
+  </header>
+
+  <div class="guide">
+    <h2>What you are looking at</h2>
+    <div class="points">
+      <div><span class="n">Each dot is a car</span><p>Its position is the car's doubt: far left, everything agrees; far right, nothing does. <span style="color:var(--charge)">Green</span> dots would be billed correctly, <span style="color:var(--review)">red</span> dots would bill the wrong person.</p></div>
+      <div><span class="n">Your promise draws the line</span><p>Using other cars whose right answer is known, TULA draws a line at the highest doubt that still keeps your promise. Cars left of the line are charged.</p></div>
+      <div><span class="n">The numbers check it</span><p>The dots are cars TULA had not seen when it drew the line, so the numbers show how the promise holds up on new traffic.</p></div>
+    </div>
+  </div>
+
+  <div class="lab">
+      <div class="try" role="group" aria-label="Try a setting"><span>Try:</span>
+        <button type="button" data-a="1">Very strict (1%)</button>
+        <button type="button" data-a="5">The 5% promise</button>
+        <button type="button" data-a="12">Relaxed (12%)</button>
+        <button type="button" data-hp="1">Keep it every time, not just on average</button>
+      </div>
+      <div class="controls">
+        <div class="ctl"><label for="alpha">Your promise: wrong bills at most</label><output id="alpha-out">5.0%</output>
+          <input id="alpha" type="range" min="0.5" max="15" step="0.5" value="5" aria-describedby="alpha-help"></div>
+        <div class="ctl"><label id="mode-l">How firmly to keep it</label>
+          <div class="seg" role="group" aria-labelledby="mode-l">
+            <button type="button" data-mode="avg" aria-pressed="true">On average</button>
+            <button type="button" data-mode="hp" aria-pressed="false">Every time, 90% sure</button>
+          </div></div>
+        <div class="ctl"><label for="split">Which data shuffle</label>
+          <select id="split"><option value="all">All splits, averaged</option></select></div>
+      </div>
+      <details class="curious"><summary>For the curious: the exact rule and what "on average" means</summary>
+        <div class="formula" id="alpha-help" aria-label="The rule each group's cut-off follows">τ<sub>g</sub> = the largest score with &nbsp;(wrong charges in group g's calibration set at or below τ<sub>g</sub> + 1) / (n<sub>g</sub> + 1) ≤ α</div>
+        <p class="note">"On average" means over many calibration sets: one split on its own can land a little above the promise, and the average over splits stays under it. "90% confidence" uses a Clopper-Pearson bound instead, so each split stays under the promise with probability at least 90%, at the cost of charging less.</p>
+      </details>
+      <p class="summary" id="summary" aria-live="polite"></p>
+      <div class="groups" id="groups"></div>
+      <div class="legend"><span><i class="dot" style="background:var(--charge)"></i>charging would be right</span><span><i class="dot" style="background:var(--review)"></i>charging would be wrong</span><span>│ the line: cars to its left are charged, cars to its right wait for another camera or a person</span></div>
+    </div>
+
+  <section style="border:0;padding-block:72px 0">
+    <div class="prose">
+      <p class="kicker">Now compare</p>
+      <h2 id="h-vs">Why not just one "90% sure" rule?</h2>
+      <p style="color:var(--muted)">This is how most billing works today: charge whenever the model says it is at least this sure. Move the slider. <span style="color:var(--hold)">Orange</span> is that one rule, used for every photo. <span style="color:var(--charge)">Green</span> is TULA at your promise above. The <span style="color:var(--review)">red</span> mark is the promise: past it, more innocent drivers are billed than promised. Notice that the same setting is safe in fog and unsafe in clear light.</p>
+    </div>
+    <div class="lab">
+      <div class="ctl" style="max-width:420px"><label for="thr">Charge when Glimmer is at least this sure</label><output id="thr-out">0.90</output>
+        <input id="thr" type="range" min="0.5" max="0.99" step="0.01" value="0.9"></div>
+      
+      <div class="versus" id="versus"></div>
+    </div>
+
+    <div class="next"><a class="btn" href="../">← Back to the story</a><a class="btn primary" href="../demo/">Next: Demo 2 · Follow one car →</a></div>
+  </section>
+</main>
+<footer><div class="wrap">TULA · Suryansh Pratap Singh · <a href="https://github.com/CopyNinja07-07/tula">Code</a> · scores from 1,050 real photos, 30 random splits · MIT licence</div></footer>
+<script src="../lab_data.js?v=30"></script>
+<script>
+(() => {
+  const L = window.TULA_LAB; if (!L) return;
+  const NAMES = { clear: "Clear photos", foggy: "Same scenes in fog", indian: "Indian set" };
+  const $ = (s) => document.querySelector(s);
+  const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  let mode = "avg";
+
+  // ---- the controller, line for line from src/tula/crc.py ----
+  function binomUcb(k, n, delta) {
+    if (k >= n) return 1;
+    const cdf = (p) => { let term = Math.pow(1 - p, n), total = term;
+      for (let i = 0; i < k; i++) { term *= (n - i) / (i + 1) * p / (1 - p); total += term; } return total; };
+    let lo = k / n, hi = 1;
+    for (let i = 0; i < 60; i++) { const mid = (lo + hi) / 2; if (cdf(mid) >= delta) lo = mid; else hi = mid; }
+    return lo;
+  }
+  function maxErrorsUcb(n, alpha, delta) { let k = -1; while (k + 1 <= n && binomUcb(k + 1, n, delta) <= alpha) k++; return k; }
+  function crcThreshold(scores, wrong, alpha, delta) {
+    const n = scores.length; let budget;
+    if (delta == null) { if (n === 0 || 1 / (n + 1) > alpha) return null; budget = alpha * (n + 1) - 1; }
+    else { budget = n ? maxErrorsUcb(n, alpha, delta) : -1; if (budget < 0) return null; }
+    const idx = scores.map((s, i) => i).sort((a, b) => scores[a] - scores[b]);
+    let best = -Infinity, errors = 0, i = 0;
+    while (i < n) { let j = i; const s = scores[idx[i]];
+      while (j < n && scores[idx[j]] === s) { errors += wrong[idx[j]]; j++; }
+      if (errors > budget) break; best = s; i = j; }
+    return best;
+  }
+
+  function byGroup(part, g) { const out = { s: [], w: [], bc: [], bw: [] };
+    part.g.forEach((gi, i) => { if (gi !== g) return; out.s.push(part.s[i]); out.w.push(part.w[i]);
+      if (part.bc) { out.bc.push(part.bc[i]); out.bw.push(part.bw[i]); } }); return out; }
+
+  function evaluate(alpha, delta, splits) {
+    return L.groups.map((name, g) => {
+      let wrong = 0, charged = 0, n = 0, taus = [], cert = 0, ncal = 0, plot = null;
+      splits.forEach((sp, k) => {
+        const cal = byGroup(sp.cal, g), test = byGroup(sp.test, g);
+        const tau = crcThreshold(cal.s, cal.w, alpha, delta);
+        const ok = tau !== null && tau > -Infinity; if (ok) cert++;
+        ncal += cal.s.length; taus.push(ok ? tau : null);
+        test.s.forEach((s, i) => { n++; if (ok && s <= tau) { charged++; wrong += test.w[i]; } });
+        if (k === 0) plot = { test, tau: ok ? tau : null };
+      });
+      return { name, wrong: wrong / n, auto: charged / n, cert, nsplits: splits.length, ncal: ncal / splits.length,
+               tau: taus.filter((t) => t !== null), plot };
+    });
+  }
+
+  function draw(canvas, test, tau) {
+    const dpr = window.devicePixelRatio || 1, w = canvas.clientWidth, h = canvas.clientHeight;
+    canvas.width = w * dpr; canvas.height = h * dpr; const c = canvas.getContext("2d"); c.scale(dpr, dpr);
+    c.clearRect(0, 0, w, h);
+    const pad = 8, X = (s) => pad + s * (w - 2 * pad);
+    // deterministic jitter so the picture is stable between redraws
+    test.s.forEach((s, i) => { const y = 10 + ((i * 2654435761) % 1000) / 1000 * (h - 30);
+      c.fillStyle = test.w[i] ? css("--review") : css("--charge"); c.globalAlpha = test.w[i] ? 0.95 : 0.45;
+      c.beginPath(); c.arc(X(s), y, test.w[i] ? 3 : 2.2, 0, 7); c.fill(); });
+    c.globalAlpha = 1;
+    if (tau !== null) { c.strokeStyle = css("--ink"); c.lineWidth = 2; c.beginPath(); c.moveTo(X(tau), 2); c.lineTo(X(tau), h - 16); c.stroke();
+      c.fillStyle = css("--ink"); c.font = "12px " + css("--mono"); c.fillText("line " + tau.toFixed(2), Math.min(X(tau) + 5, w - 78), h - 3); }
+    c.fillStyle = css("--muted"); c.font = "11px " + css("--mono"); c.fillText("0 no doubt", pad, h - 3);
+    if (tau === null) c.fillText("too little data: nothing charged automatically", Math.max(pad, w / 2 - 100), h / 2);
+  }
+
+  function render() {
+    const alpha = +$("#alpha").value / 100, sel = $("#split").value;
+    $("#alpha-out").textContent = (alpha * 100).toFixed(1) + "%";
+    const splits = sel === "all" ? L.splits : [L.splits[+sel]];
+    const res = evaluate(alpha, mode === "hp" ? 0.1 : null, splits);
+    $("#groups").innerHTML = res.map((r, i) => `
+      <div class="g"><h3>${NAMES[r.name]} <span class="badge ${r.cert === r.nsplits ? "ok" : "no"}">${r.cert === r.nsplits ? "promise can be kept" : r.cert ? `promise kept in ${r.cert} of ${r.nsplits} shuffles` : "too little data: no auto-charge"}</span></h3>
+        <div class="stats">
+          <div><span>wrong bills</span><b class="${r.wrong > alpha ? "over" : ""}">${(r.wrong * 100).toFixed(2)}%</b></div>
+          <div><span>charged straight away</span><b>${(r.auto * 100).toFixed(1)}%</b></div>
+          <div><span>checked cars</span><b>${Math.round(r.ncal)}</b></div>
+          <div><span>line position</span><b>${r.tau.length ? (r.tau.reduce((a, b) => a + b, 0) / r.tau.length).toFixed(3) : "none"}</b></div>
+        </div>
+        <p class="plain-line">${r.cert === 0 ? "Too few checked cars to make this promise, so nothing in this group is charged automatically." : `Out of 100 cars like these, about <b>${Math.round(r.auto * 100)}</b> are charged straight away and about <b>${(r.wrong * 100).toFixed(1)}</b> of those 100 are charged wrongly.`}</p>
+        <canvas id="cv${i}" role="img" aria-label="Test passages of ${NAMES[r.name]} by doubt score, with the cut-off"></canvas>
+      </div>`).join("");
+    res.forEach((r, i) => draw(document.getElementById("cv" + i), r.plot.test, r.plot.tau));
+    const kept = res.every((r) => r.wrong <= alpha), auto = res.reduce((a, r) => a + r.auto, 0) / res.length;
+    $("#summary").innerHTML = `With a promise of <b>at most ${(alpha * 100).toFixed(1)}% wrong bills</b>${mode === "hp" ? " (kept with 90% confidence)" : ""}, TULA charges about <b>${Math.round(auto * 100)}%</b> of cars automatically and ${kept ? "keeps the promise in <b>every</b> group" : "goes over in a group on this split (the promise is about the average over splits)"}. The other cars are not let off: they wait for another camera or a person.`;
+    versus();
+  }
+
+  function versus() {
+    const thr = +$("#thr").value, alpha = +$("#alpha").value / 100; $("#thr-out").textContent = thr.toFixed(2);
+    const sel = $("#split").value, splits = sel === "all" ? L.splits : [L.splits[+sel]];
+    const tula = evaluate(alpha, mode === "hp" ? 0.1 : null, splits);
+    const max = 0.2;
+    $("#versus").innerHTML = L.groups.map((name, g) => {
+      let n = 0, wrong = 0; splits.forEach((sp) => { const t = byGroup(sp.test, g);
+        t.bc.forEach((b, i) => { n++; if (b >= thr) wrong += t.bw[i]; }); });
+      const one = wrong / n, tw = tula[g].wrong;
+      const bar = (v, col) => `<div class="track"><i style="width:${Math.min(100, v / max * 100)}%;background:${col}"></i><span class="promise" style="left:${alpha / max * 100}%"></span></div>`;
+      return `<div class="vrow"><span>${NAMES[name]}</span>${bar(one, "var(--hold)")}<b class="${one > alpha ? "over" : ""}">${(one * 100).toFixed(1)}%</b></div>
+              <div class="vrow"><span style="color:var(--muted)">TULA</span>${bar(tw, "var(--charge)")}<b>${(tw * 100).toFixed(1)}%</b></div>`;
+    }).join("") + `<div class="legend"><span><i class="dot" style="background:var(--hold)"></i>one threshold on Glimmer's confidence</span><span><i class="dot" style="background:var(--charge)"></i>TULA at the promise above</span><span><i class="dot" style="background:var(--review)"></i>red line: the promise</span></div>`;
+  }
+
+  const sel = $("#split"); L.splits.forEach((_, i) => sel.insertAdjacentHTML("beforeend", `<option value="${i}">Split ${i + 1}</option>`));
+  document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => {
+    mode = b.dataset.mode; document.querySelectorAll(".seg button").forEach((x) => x.setAttribute("aria-pressed", String(x === b))); render(); }));
+  $("#alpha").addEventListener("input", render); sel.addEventListener("change", render); $("#thr").addEventListener("input", versus);
+  document.querySelectorAll(".try button").forEach((b) => b.addEventListener("click", () => {
+    if (b.dataset.a) { $("#alpha").value = b.dataset.a; }
+    if (b.dataset.hp) { const hp = mode !== "hp"; mode = hp ? "hp" : "avg";
+      document.querySelectorAll(".seg button").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.mode === mode))); }
+    render(); }));
+  let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 150); });
+  render();
+})();
+</script>
+</body>
+</html>

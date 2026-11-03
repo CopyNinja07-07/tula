@@ -30,10 +30,10 @@ def _font(name: str, file: str) -> str:
 
 # Palette: night road, lit by an emerald-to-lime gradient; amber and rose for hold and review.
 STYLE = ("<style>" + _font("TulaDisplay", "bricolage-grotesque.woff2") + _font("TulaMono", "geist-mono.woff2") + """
-  :root{--bg:#06100c;--ink:#ecf6f0;--muted:#93a99d;--line:#1d3329;--brass:#bef264;
-        --charge:#34d399;--hold:#fbbf24;--review:#fb7185;--sign:#10b981;--panel:#0f1d17;--plate:#ecece4}
-  @media (prefers-color-scheme: light){:root{--bg:#f4f8f5;--ink:#0a1711;--muted:#4b5f54;--line:#d5e3da;--brass:#65a30d;
-        --charge:#059669;--hold:#b45309;--review:#be123c;--sign:#047857;--panel:#ffffff;--plate:#fbfbf5}}
+  :root{--bg:#151817;--ink:#eceeed;--muted:#9ba29e;--line:#2a2f2c;--brass:#a3e635;
+        --charge:#34d399;--hold:#f5b94a;--review:#f87171;--sign:#34d399;--panel:#1b1f1d;--plate:#ecece4}
+  @media (prefers-color-scheme: light){:root{--bg:#ffffff;--ink:#131614;--muted:#5a615d;--line:#e3e6e4;--brass:#65a30d;
+        --charge:#059669;--hold:#b45309;--review:#dc2626;--sign:#059669;--panel:#f2f4f2;--plate:#fbfbf5}}
   text{font-family:TulaMono,ui-monospace,"SF Mono",Menlo,monospace;fill:var(--ink)}
   .sans{font-family:TulaDisplay,system-ui,-apple-system,"Segoe UI",sans-serif}
   .muted{fill:var(--muted)} .bg{fill:var(--bg)} .panel{fill:var(--panel);stroke:var(--line)}
@@ -41,9 +41,9 @@ STYLE = ("<style>" + _font("TulaDisplay", "bricolage-grotesque.woff2") + _font("
   .charge{fill:var(--charge)} .hold{fill:var(--hold)} .review{fill:var(--review)} .sign{fill:url(#tg)}
 </style>""")
 GRAD = ('<defs><linearGradient id="tg" x1="0" y1="0" x2="1" y2="0.3">'
-        '<stop offset="0" stop-color="#10b981"/><stop offset="0.5" stop-color="#6ee7b7"/><stop offset="1" stop-color="#bef264"/>'
+        '<stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#a3e635"/>'
         '</linearGradient><radialGradient id="glow" cx="0.5" cy="0" r="0.9">'
-        '<stop offset="0" stop-color="#10b981" stop-opacity="0.22"/><stop offset="1" stop-color="#10b981" stop-opacity="0"/>'
+        '<stop offset="0" stop-color="#34d399" stop-opacity="0.06"/><stop offset="1" stop-color="#10b981" stop-opacity="0"/>'
         '</radialGradient></defs>')
 
 

@@ -1,16 +1,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TULA Toll Desk</title>
+<title>TULA · Demo 2: follow one car</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="../assets/site.css">
 <style>
 @font-face { font-family: "Bricolage Grotesque"; src: url(../assets/fonts/bricolage-grotesque.woff2) format("woff2"); font-weight: 200 800; font-display: swap; }
 @font-face { font-family: "Geist"; src: url(../assets/fonts/geist.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
 @font-face { font-family: "Geist Mono"; src: url(../assets/fonts/geist-mono.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
 /* Layout: a toll operator's desk. Passage queue on the left, the camera frame and the evidence slip on the right. */
 :root {
-  --bg: #06100c; --panel: #0f1d17; --ink: #ecf6f0; --muted: #93a99d; --line: #1d3329;
+  --bg: #0d0f0e; --panel: #151817; --ink: #eceeed; --muted: #9ba29e; --line: rgba(255,255,255,0.08);
   --sign: linear-gradient(115deg, #10b981, #6ee7b7 48%, #bef264); --sign-ink: #04140d;
-  --charge: #34d399; --hold: #fbbf24; --review: #fb7185;
+  --charge: #34d399; --hold: #f5b94a; --review: #f87171;
   --plate: #fbfbf7; --plate-ink: #111; --ind: #1d4fa3; --accent: #6ee7b7;
   --display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
   --body: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -18,11 +19,11 @@
   color-scheme: dark;
 }
 @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
-  --bg: #f4f8f5; --panel: #ffffff; --ink: #0a1711; --muted: #4b5f54; --line: #d5e3da;
+  --bg: #fafaf8; --panel: #ffffff; --ink: #131614; --muted: #5a615d; --line: rgba(0,0,0,0.08);
   --sign: linear-gradient(115deg, #047857, #10b981 48%, #65a30d); --sign-ink: #ffffff;
   --charge: #059669; --hold: #b45309; --review: #be123c; --accent: #047857; color-scheme: light } }
 :root[data-theme="light"] {
-  --bg: #f4f8f5; --panel: #ffffff; --ink: #0a1711; --muted: #4b5f54; --line: #d5e3da;
+  --bg: #fafaf8; --panel: #ffffff; --ink: #131614; --muted: #5a615d; --line: rgba(0,0,0,0.08);
   --sign: linear-gradient(115deg, #047857, #10b981 48%, #65a30d); --sign-ink: #ffffff;
   --charge: #059669; --hold: #b45309; --review: #be123c; --accent: #047857; color-scheme: light }
 body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5; }
@@ -63,8 +64,8 @@ header.sign p { margin: 0; font-size: 16px; max-width: 60ch; text-wrap: balance;
 .plate .txt { font: 600 clamp(18px, 3vw, 24px)/1.6 var(--mono); letter-spacing: 0.08em; padding: 0 12px; white-space: nowrap; }
 .plate.none .txt { color: #888; font-style: italic; letter-spacing: 0; font-size: 15px; }
 .conf { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
-.bar { flex: 1; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; max-width: 160px; }
-.bar b { display: block; height: 100%; background: var(--muted); }
+.cbar { flex: 1; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; max-width: 160px; }
+.cbar b { display: block; height: 100%; background: var(--muted); }
 .truth { font-size: 12px; color: var(--muted); }
 .mark-ok { color: var(--charge); font-weight: 600; } .mark-bad { color: var(--review); font-weight: 600; }
 table.ledger { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
@@ -88,14 +89,36 @@ table.ledger td:last-child { text-align: right; font-family: var(--mono); }
 .results tr.tula td { font-weight: 600; }
 footer { font-size: 12px; color: var(--muted); max-width: 90ch; }
 button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.intro { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 72px 8px; }
+.page-head { max-width: 720px; }
+.page-head .title { font: 800 clamp(40px, 6vw, 64px)/1.02 var(--display); letter-spacing: -0.03em; margin: 0; }
+.intro .guide { margin-top: 32px; }
+.bar .wrap { max-width: 1240px; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 28px; }
+section.results { padding-block: 14px 16px; }
+footer { border-top: 0; padding-block: 8px 24px; }
 </style>
 
-<div class="wrap">
-  <header class="sign">
-    <h1><a href="../" style="color:inherit;text-decoration:none" title="Back to the TULA site">TULA</a></h1>
-    <p>Before an AI fines someone, it should weigh the evidence. Pick a toll passage to see what TULA decided and why.</p>
-    <span class="promise" id="promise">Promise: ≤ 5% wrong charges per group</span>
+<div class="bar"><div class="wrap" style="display:flex;padding-block:14px">
+  <a class="logo" href="../" aria-label="TULA home"><svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#a3e635"/></linearGradient></defs><path d="M12 24h40M32 14v38M20 24l-8 14h16zM44 24l-8 14h16zM22 52h20" stroke="url(#lg)" stroke-width="4.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/></svg>TULA</a>
+  <nav aria-label="Pages"><a href="../">Home</a><a href="../try/">Demo 1 · Set the promise</a><a href="./" aria-current="page">Demo 2 · Follow one car</a><a href="https://github.com/CopyNinja07-07/tula">Code</a></nav>
+</div></div>
+<div class="intro">
+  <header class="page-head">
+    <p class="kicker">Demo 2 of 2</p>
+    <h1 class="title">Follow one car</h1>
+    <p class="lede">Each row on the left is one real car passing a toll camera. Click one to see every step TULA took, and what today's billing rule would have done instead. <span id="promise"></span></p>
   </header>
+  <div class="guide">
+    <h2>How to read the screen</h2>
+    <div class="points">
+      <div><span class="n">1 · The photo</span><p>The real camera photo, with the boxes SAM 3.1 drew: <span style="color:#28dc78">green</span> for the plate, <span style="color:#fac828">yellow</span> for the car.</p></div>
+      <div><span class="n">2 · Two readers</span><p>What the open-source reader and Muse Glimmer each read, how sure they were, and whether they were right.</p></div>
+      <div><span class="n">3 · The evidence</span><p>Which checks raised doubt (for example "FASTag belongs to another car"), and where this car's doubt sits against the line.</p></div>
+      <div><span class="n">4 · The decision</span><p>Charge, hold or send to a person, the written reason, and what today's rule would have done.</p></div>
+    </div>
+  </div>
+</div>
+<div class="wrap">
 
   <div class="desk">
     <aside class="queue" aria-label="Toll passages">
@@ -131,7 +154,7 @@ button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); o
                 make_mismatch: "Make ≠ registry", low_confidence: "Reader unsure", no_tag: "No FASTag read" };
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  $("#promise").textContent = `Promise: ≤ ${Math.round((D.alpha || 0.05) * 100)}% wrong charges per group`;
+  $("#promise").textContent = `The promise here: at most ${Math.round((D.alpha || 0.05) * 100)} wrong bills in every 100, for each kind of photo.`;
   let current = 0;
 
   function plate(text) {
@@ -142,7 +165,7 @@ button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); o
     const c = Math.max(0, Math.min(1, r.plate_confidence || 0));
     const ok = r.plate_text && r.plate_text === truth;
     return `<div class="reader"><h3>${name} <small>${sub}</small></h3>${plate(r.plate_text)}
-      <div class="conf"><span>sure</span><span class="bar"><b style="width:${(c * 100).toFixed(0)}%"></b></span><span>${(c * 100).toFixed(0)}%</span>
+      <div class="conf"><span>sure</span><span class="cbar"><b style="width:${(c * 100).toFixed(0)}%"></b></span><span>${(c * 100).toFixed(0)}%</span>
       <span class="${ok ? "mark-ok" : "mark-bad"}">${r.plate_text ? (ok ? "correct" : "wrong") : "abstained"}</span></div></div>`;
   }
 
