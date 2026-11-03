@@ -1,122 +1,170 @@
-# TULA
+<div align="center">
 
-**Before an AI fines someone, it should weigh the evidence.** *Tulā* (तुला) is Sanskrit for the balance scale.
+<img src="docs/assets/scale.svg" alt="Animated balance scale: two agreeing plate reads tip it to CHARGE, a FASTag that contradicts the plate tips it to REVIEW, fog leaves it level and the passage is HELD" width="100%">
 
-TULA is a safety layer for AI systems that bill or fine people automatically. Its first testbed is barrier-free toll billing in India, where a camera reads your number plate and a bill follows with no barrier and no person checking. For every vehicle TULA decides **charge**, **hold**, or **send to a human**, and it keeps the wrong-charge rate under a stated promise, separately for each kind of traffic (fog, clear, plate type).
+# TULA · तुला
 
-Built solo for the Meta Global AI Developer Hackathon 2026 (Indie track) with **Meta SAM 3.1** and **Meta Muse Glimmer 30B**, both running on open weights.
+**Before an AI fines someone, it should weigh the evidence.**
 
-**[Demo page](docs/demo/index.html)** · **[Whitepaper](docs/WHITEPAPER.md)** · **[Results](experiments/results/)**
+[**Live lab**](https://copyninja07-07.github.io/tula/#lab) &nbsp;·&nbsp; [**Toll desk demo**](https://copyninja07-07.github.io/tula/demo/) &nbsp;·&nbsp; [**Whitepaper**](docs/WHITEPAPER.md) &nbsp;·&nbsp; [**Every number**](experiments/results/)
 
-## The problem
+<sub>Meta Global AI Developer Hackathon 2026 · Indie track · built solo on open Meta models: <b>SAM 3.1</b> and <b>Muse Glimmer 30B</b></sub>
 
-India started Multi-Lane Free Flow tolling on NH-48 in 2026, with more than 100 plazas planned. A misread plate becomes an e-notice for someone else, and the fee doubles after 72 hours. Similar systems elsewhere already bill the wrong people: a New York audit found about 36,000 wrong charges at one exit in three weeks, and in October 2026 a Nebraska couple got a $500 toll bill from a misread plate. Today's systems charge when one confidence score passes one threshold, so nobody can say how often an innocent driver is billed, in fog, at night, or when someone clones a plate.
+</div>
 
-## What TULA does
+---
 
-```
-camera frame
-   │  SAM 3.1 (Meta) finds the plate and the vehicle
-   ▼
-Reader A: open plate OCR        Reader B: Muse Glimmer 30B (Meta)
-(plate crop only)               (whole photo: plate, type, make, colour)
-   │       the readers never see each other's answer       │
-   └──────────────────────┬──────────────────────────────────┘
-                          ▼
-     Evidence check against the FASTag and the registered vehicle
-                → one doubt score
-                          ▼
-     Risk controller: conformal risk control, one cut-off per group
-        ├── low doubt, group certified  → CHARGE
-        ├── borderline                  → HOLD (wait for the next camera)
-        └── otherwise                   → HUMAN REVIEW + evidence note
-```
+### The charge sheet
 
-- **Conformal risk control** (Angelopoulos et al., 2022) picks each cut-off so the expected wrong-charge rate stays under the promise α.
-- **No certificate, no automatic charge:** a group with too little checked data is never charged automatically.
-- **Review budget:** for a given number of reviewers, TULA reports the strictest promise it can keep.
-- **Learning after launch:** TULA recalibrates from a small random audit, never from disputes alone, because "nobody complained" is not the same as "correct".
+India's new barrier-free tolls bill a car from a photo. No barrier, no person checking. A misread plate becomes an e-notice for somebody else, and the fee doubles after 72 hours. Systems like this already bill the wrong people: a New York audit found about 36,000 wrong charges at one exit in three weeks.
 
-## Results on real photos
+Today's billers trust the FASTag, else one confidence threshold. **Nobody can tell a driver how often an innocent car gets charged**, in fog, at night, or when someone clones a plate.
 
-1,050 labelled photos in three groups: 232 clear, the same 232 scenes in fog, and 586 Indian-set photos. Promise: at most 5% wrong charges per group. Mean of 200 random splits. Full tables: [`experiments/results/`](experiments/results/).
+TULA is the layer between the camera and the bill. For every passage it decides **charge**, **hold** or **send to a human**, and it states, per group of traffic, the wrong-charge rate it will not exceed.
 
-**TULA keeps the promise in every group, and today's biller does not:**
+---
 
-| Method | Wrong charges | Charged automatically | Wrong: clear | Wrong: fog | Wrong: Indian set |
-|---|---|---|---|---|---|
+### How a passage is weighed
+
+<img src="docs/assets/pipeline.svg" alt="Animated pipeline: a car passes the gantry, SAM 3.1 boxes the plate, two blind readers read it, the evidence check and the risk controller produce charge, hold or review" width="100%">
+
+| Step | What runs | Why it is there |
+|---|---|---|
+| **Find** | Meta **SAM 3.1**, text prompts `"license plate"` and `"vehicle"` (MLX, on a 16 GB MacBook) | Found the plate in 247 / 248 foggy photos; the detector used before found 207 |
+| **Read, twice, blind** | Reader A: an open-source plate OCR on the crop. Reader B: Meta **Muse Glimmer 30B** on the whole photo (official 4-bit GGUF, llama.cpp, two free Kaggle T4s) | Neither sees the other's answer, so agreement is evidence and not an echo. Glimmer also reports make, colour and type, which a plate alone cannot |
+| **Check** | Plain code compares both reads with the FASTag and the registered vehicle | Swapped tags, cloned plates and wrong toll classes show up as contradictions |
+| **Score** | A logistic model turns the contradictions into one doubt score `s`, fitted on its own split | A better score buys automation; it never buys safety |
+| **Decide** | Conformal risk control picks a cut-off `τ_g` per group `g` from labelled calibration passages | This is where the promise comes from |
+| **Explain** | A deterministic evidence note, written by code, never by a model | A reviewer or a driver can check every sentence |
+
+**The rule.** For each group, with `n_g` calibration passages and `L_i(τ) = 1[s_i ≤ τ] · wrong_i`:
+
+$$
+\tau_g \;=\; \max\Big\{\tau \;:\; \tfrac{n_g}{n_g+1}\,\widehat{L}_g(\tau) + \tfrac{1}{n_g+1} \;\le\; \alpha \Big\}
+\quad\Longrightarrow\quad
+\mathbb{E}\big[\text{wrong-charge rate}_g\big] \le \alpha
+$$
+
+(Angelopoulos et al., *Conformal Risk Control*, 2022.) A group with too few passages to pass even at `τ = −∞` gets **no certificate, so no automatic charge**. A second mode swaps the average for a Clopper-Pearson bound, so the promise holds with probability ≥ 90% on each calibration set.
+
+---
+
+### The verdict, on 1,050 real photos
+
+<img src="docs/assets/verdict.svg" alt="Wrong charges per group: today's biller 14 to 19 percent, one Glimmer threshold 12.2 percent in clear and 7.0 percent on the Indian set, TULA 3.6 to 4.6 percent, all under the 5 percent promise" width="100%">
+
+232 clear photos, the **same 232 scenes in fog** (hand-labelled for TULA), and 586 Indian-set photos. Promise `α = 5%` per group. Scenes split 20 / 40 / 40 into fit, calibrate, test; mean of **200 random splits**.
+
+| | Wrong charges | Charged automatically | Clear | Fog | Indian set |
+|---|---:|---:|---:|---:|---:|
 | Today's biller (trust the tag, else the plate) | 17.0% | 100% | 14.1% | 18.9% | 17.4% |
-| One threshold: Muse Glimmer ≥ 90% sure | 6.7% | 52% | **12.2%** | 0.1% | **7.0%** |
-| One threshold: open plate OCR ≥ 90% sure | 3.7% | 28% | **8.4%** | 2.5% | 2.3% |
-| **TULA** | **4.3%** | **86%** | 3.6% | 4.0% | 4.6% |
+| One threshold: Glimmer ≥ 90% sure | 6.7% | 52% | **12.2%** ✗ | 0.1% | **7.0%** ✗ |
+| One threshold: open OCR ≥ 90% sure | 3.7% | 28% | **8.4%** ✗ | 2.5% | 2.3% |
+| Glimmer alone + controller | 4.2% | 85% | 3.5% | 4.0% | 4.5% |
+| **TULA** | **4.3%** | **86%** | 3.6% ✓ | 4.0% ✓ | 4.6% ✓ |
 | TULA, 90%-confidence mode | 2.5% | 79% | 1.5% | 1.9% | 3.1% |
 
-A single threshold that is safe in fog is unsafe in clear weather: Glimmer is careful in fog and over-confident in clear light. TULA sets a separate cut-off per group, so it does not need to know this in advance.
+The finding that matters: **a threshold that is safe in fog is unsafe in clear light.** Muse Glimmer refuses to guess in fog (it said "cannot read" on 55% of foggy photos) and is over-confident when it can see (21 wrong reads at ≥ 90% confidence on clear photos). One global threshold cannot know that. A per-group controller does not need to.
 
-**Readers** (exact plate reads against hand labels):
+<details>
+<summary><b>Reader accuracy</b> (exact plate, against hand labels)</summary>
 
-| Photos | SAM 3.1 found the plate | Open plate OCR | Muse Glimmer | Glimmer said "cannot read" |
-|---|---|---|---|---|
+| Photos | SAM 3.1 found the plate | Open plate OCR | Muse Glimmer 30B | Glimmer said "cannot read" |
+|---|---:|---:|---:|---:|
 | Clear | 248 / 248 | 70.7% | **90.9%** | 0% |
-| Fog (same scenes) | 247 / 248 | 14.7% | **37.1%** | 55% |
-| Indian set | – | 32.4% | **68.0%** | 16% |
+| Fog, same scenes | 247 / 248 | 14.7% | **37.1%** | 54.7% |
+| Indian set | – | 32.4% | **68.0%** | 16.3% |
 
-**Red team:** with attackers (cloned plates, swapped tags) taking up to 30% of traffic after calibration, TULA's wrong charges stay under the bound of promise + attacker share (14.6% at 30%, bound 35%; today's biller: 42%).
+</details>
 
-**Review budget:** a 2% promise still charges 63% automatically; a 1% promise only 30%. That is how many reviewers a stricter promise costs.
+<details>
+<summary><b>Review budget</b>: what a stricter promise costs in human work</summary>
 
-**Also found:** the two readers fail on the same photos more often than chance (both wrong on 9% of clear photos, vs 3% if independent), so on these photos TULA is only slightly better than Glimmer alone with the same controller (86% vs 85% automatic). 20 of the 232 hand labels look like typing slips ([list](experiments/results/label_suspects.csv)); they are left unchanged.
+| Promise | Wrong charges | Charged automatically | Held or reviewed |
+|---:|---:|---:|---:|
+| 1% | 0.53% | 30% | 70% |
+| 2% | 1.28% | 63% | 37% |
+| 3% | 2.31% | 78% | 22% |
+| 5% | 4.40% | 86% | 14% |
+| 10% | 9.57% | 94% | 6% |
 
-What these numbers are and are not:
-- The plate photos and both readers' answers are real. The FASTag, registry and scenarios (missing tag, swapped tag, cloned plate, wrong class) are simulated, because no public data links tags, registrations and bills.
-- Reader A is an open-source plate reader used as a stand-in. It is not the system any Indian toll operator uses.
-- Look-alike clones (a copied plate on the same make, model and colour) cannot be caught from one photo; the red team measures how much they cost.
+</details>
 
-## Run it
+---
+
+### Cross-examination: the red team
+
+<img src="docs/assets/redteam.svg" alt="As attackers take up to 30 percent of traffic after calibration, TULA's wrong charges stay under the bound of promise plus attacker share, while today's biller climbs to 42 percent" width="100%">
+
+The controller is calibrated on honest traffic, then attackers (cloned plates, swapped FASTags) take a share `ε` of it. Theory allows the wrong-charge rate to reach `α + ε`. Measured: TULA uses about a third of that room, at every attack level. **Look-alike clones** (a copied plate on a car of the same make and colour) leave nothing in one photo to catch. They still stay inside the bound, because the bound never assumed they would be caught.
+
+---
+
+### What the scale cannot see
+
+- **The FASTag, registry and attack mix are simulated.** The photos and both models' answers are real. No public data links tags, registrations and bills.
+- **Reader A is an open-source plate reader used as a stand-in.** It is not the system any Indian toll operator uses.
+- **The two readers fail together more than chance would.** On clear photos both are wrong on 9%, three times what independence predicts, so here TULA is only slightly better than Glimmer alone with the same controller. Independence should be measured, not assumed.
+- **20 of the 232 hand labels look like typing slips** (both readers agree on something else). They are [listed](experiments/results/label_suspects.csv) and left unchanged, so every reader is scored against the same labels.
+- **The guarantee assumes calibration traffic looks like real traffic.** The [whitepaper](docs/WHITEPAPER.md) (Sections 3.5, 3.7, 7.4) shows where that breaks and how a small random audit, never disputes alone, repairs it.
+
+---
+
+### Reproduce every number
 
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-PYTHONPATH=src .venv/bin/python -m pytest -q                       # offline tests
-PYTHONPATH=src .venv/bin/python -m tula.evaluate                   # simulated benchmark
-PYTHONPATH=src .venv/bin/python -m tula.real_bench --alpha 0.05    # real photos (needs the reads below)
+PYTHONPATH=src .venv/bin/python -m pytest -q                              # 25 offline tests
+PYTHONPATH=src .venv/bin/python -m tula.real_bench --alpha 0.05 --splits 200
+PYTHONPATH=src .venv/bin/python -m tula.evaluate                          # simulated traffic
 ```
 
-Reads on real photos:
+<details>
+<summary><b>Regenerate the model reads, the site and the art</b></summary>
 
-| Step | Command | Where it runs |
+| Step | Command | Runs on |
 |---|---|---|
-| SAM 3.1 plate and vehicle boxes | `PYTHONPATH=src .venv/bin/python tools/run_sam_bundle.py` | Apple Silicon Mac (MLX), about 3 s per photo |
-| Reader A on SAM crops | `PYTHONPATH=src .venv/bin/python tools/reader_a_on_sam.py` | CPU |
-| Muse Glimmer reads | `kaggle/glimmer_reader/` (push with `kaggle kernels push --accelerator NvidiaTeslaT4`) | 2× T4 GPU on Kaggle, llama.cpp, Meta's official 4-bit GGUF |
-| Compare readers | `PYTHONPATH=src .venv/bin/python tools/compare_readers.py` | CPU |
-| Demo data | `PYTHONPATH=src .venv/bin/python tools/make_demo.py` | CPU |
+| SAM 3.1 boxes | `tools/run_sam_bundle.py` | Apple Silicon (MLX), ~3 s / photo |
+| Open OCR on SAM crops | `tools/reader_a_on_sam.py` | CPU |
+| Muse Glimmer reads | `kaggle/glimmer_reader/` → `kaggle kernels push --accelerator NvidiaTeslaT4` | 2× T4, llama.cpp, ~7 h for 1,096 photos |
+| Reader comparison | `tools/compare_readers.py` | CPU |
+| Live-lab data | `tools/export_lab.py` | CPU |
+| Toll-desk data | `tools/make_demo.py` | CPU |
+| Animated SVGs | `tools/make_art.py` (drawn from the result files) | CPU |
 
-`src/tula/muse.py` is an optional Reader B through the hosted Meta Model API (Muse Spark), for anyone with an API key in `.env`.
+Run each with `PYTHONPATH=src .venv/bin/python <script>`. The browser lab re-implements `src/tula/crc.py` line for line, so its numbers come from the same rule as the paper.
 
-## Data
+</details>
 
-| Data | Use | Licence |
+<details>
+<summary><b>Where things live</b></summary>
+
+```
+src/tula/        crc.py (controller) · evidence.py (checks + learned score) · note.py (evidence note)
+                 real_bench.py (real photos) · sam_crop.py (SAM 3.1) · reader_a.py · muse.py
+                 simulate.py · evaluate.py · audit.py (review budget) · feedback.py (dispute loop)
+kaggle/          Muse Glimmer reader for Kaggle GPUs
+tools/           one script per pipeline step, plus the site and art builders
+experiments/     results/: every number quoted anywhere
+data/labels/     hand labels for the foggy photos
+docs/            website (index.html, demo/), animated SVGs, whitepaper
+tests/           offline tests
+```
+
+</details>
+
+### Data
+
+| Source | Use | Licence |
 |---|---|---|
-| [Foggy-Hazy License Plates](https://data.mendeley.com/datasets/p3jr4555tf) (Mendeley), 248 photos plus their clear versions | Fog vs clear on the same scenes. Plate text hand-labelled for TULA: [`data/labels/foggy_labels.csv`](data/labels/foggy_labels.csv) | CC BY 4.0 |
-| [zenitsu09/indian-number-plate](https://huggingface.co/datasets/zenitsu09/indian-number-plate) (Hugging Face) | Indian plates with text | Not stated by the uploader |
-| [sonnetechnology/license-plate-text-recognition-full](https://huggingface.co/datasets/sonnetechnology/license-plate-text-recognition-full) (Hugging Face) | Second country (Vietnam) for Reader A | CC BY 4.0 |
+| [Foggy-Hazy License Plates](https://data.mendeley.com/datasets/p3jr4555tf) (Mendeley) | 248 foggy photos + clear versions, plate text [hand-labelled for TULA](data/labels/foggy_labels.csv) | CC BY 4.0 |
+| [zenitsu09/indian-number-plate](https://huggingface.co/datasets/zenitsu09/indian-number-plate) | Indian plates with text | Not stated by the uploader |
+| [sonnetechnology/license-plate-text-recognition-full](https://huggingface.co/datasets/sonnetechnology/license-plate-text-recognition-full) | Vietnamese plates, second country for the OCR check | CC BY 4.0 |
 
-Full photo sets are not redistributed here; download them into `data/raw/`. The demo page carries small thumbnails of 29 photos, with credit.
+Full photo sets are not redistributed; download them into `data/raw/`. The toll-desk demo carries small thumbnails of 29 photos, with credit.
 
-## Layout
+### Prior work
 
-| Folder | Contents |
-|---|---|
-| `src/tula/` | Pipeline: SAM 3.1 crops, readers, evidence check, risk controller, review budget, audit loop, benchmarks |
-| `kaggle/glimmer_reader/` | Muse Glimmer reader that runs on Kaggle GPUs |
-| `tools/` | Scripts that run each step on the photo set and build the demo |
-| `experiments/results/` | Every number in this README and the whitepaper |
-| `data/labels/` | Hand-made plate labels for the foggy photos |
-| `docs/` | Whitepaper and demo page |
-| `tests/` | Offline tests |
+Every building block exists already: plate OCR, vision-language plate readers (LP-LLM, BLPR), conformal risk control, deferral to humans under a budget, audit-based error control (Gibbs, Han, Tibshirani and Zrnic, 2026), clone checks against a registry. To our knowledge they have not been combined and measured for toll billing. Section 4 of the [whitepaper](docs/WHITEPAPER.md) says which parts are new and which are not.
 
-## Prior work
-
-Each building block exists already: plate OCR, vision-language plate readers (LP-LLM, BLPR), conformal risk control, deferral to humans under a budget, audit-based error control (Gibbs, Han, Tibshirani and Zrnic, 2026), clone-plate checks against the registry. To our knowledge they have not been combined and measured for toll billing. See Section 4 of the whitepaper.
-
-Suryansh Pratap Singh · [GitHub](https://github.com/CopyNinja07-07)
+<div align="center"><sub>Suryansh Pratap Singh · <a href="https://github.com/CopyNinja07-07">GitHub</a> · <i>tulā</i>, Sanskrit for the balance scale</sub></div>
