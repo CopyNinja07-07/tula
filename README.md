@@ -14,7 +14,7 @@ TULA checks automatic toll bills before they are sent, and keeps a written promi
 [![Tests](https://img.shields.io/badge/tests-25%20passing-10b981?style=flat-square&labelColor=06100c)](tests/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-93a99d?style=flat-square&labelColor=06100c)](LICENSE)
 
-**[🌐 Website](https://copyninja07-07.github.io/tula/)** · **[🎚️ Demo 1 · Set the promise](https://copyninja07-07.github.io/tula/try/)** · **[🚗 Demo 2 · Follow one car](https://copyninja07-07.github.io/tula/demo/)** · **[📄 Whitepaper](docs/WHITEPAPER.md)** · **[📊 Every number](experiments/results/)**
+**[▶️ Demo video](https://youtu.be/q64mBXlkEQk)** · **[🌐 Website](https://copyninja07-07.github.io/tula/)** · **[🎚️ Demo 1 · Set the promise](https://copyninja07-07.github.io/tula/try/)** · **[🚗 Demo 2 · Follow one car](https://copyninja07-07.github.io/tula/demo/)** · **[📄 Whitepaper](docs/WHITEPAPER.md)** · **[📊 Every number](experiments/results/)**
 
 </div>
 
@@ -24,10 +24,11 @@ TULA checks automatic toll bills before they are sent, and keeps a written promi
 
 TULA was built solo for the **Meta Global AI Developer Hackathon 2026** (26 October to 4 November), **Indie track**, theme **Build for Your World**, by Suryansh Pratap Singh. The idea came on 22 October, and the first design notes and simulated benchmark were committed on 25 October, while applying. Everything that uses Meta's models was built during the hackathon: SAM 3.1 on the photos, the Muse Glimmer reads, the hand labels, the real-photo benchmark, the red team and the website. The [commit history](https://github.com/CopyNinja07-07/tula/commits/main) shows the dates.
 
-## For judges: a three-minute tour
+## For judges: a short tour
 
 | | What to open | What you will see |
 |---|---|---|
+| 0 | **[The 3-minute demo video](https://youtu.be/q64mBXlkEQk)** | The whole story in under three minutes, with both demos running live |
 | 1 | **[The website](https://copyninja07-07.github.io/tula/)**, top to bottom | The problem, how TULA works in four steps, the idea that makes it safe, and the results on 1,050 real photos |
 | 2 | **[Demo 1 · Set the promise](https://copyninja07-07.github.io/tula/try/)** | You run the toll road. Move the slider to choose how many wrong bills you accept; TULA redraws its decision line for fog, clear and Indian plates, live on the real scores. Then try a single "90% sure" rule and watch it break in clear weather |
 | 3 | **[Demo 2 · Follow one car](https://copyninja07-07.github.io/tula/demo/)** | Click a real car and follow every step: the photo with SAM 3.1's boxes, both readers' answers, the evidence, TULA's decision with its written reason, and what today's rule would have done |
