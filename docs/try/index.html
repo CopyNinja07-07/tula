@@ -204,7 +204,7 @@ canvas { width: 100%; height: 120px; display: block; border-radius: 12px; backgr
       </div>`).join("");
     res.forEach((r, i) => draw(document.getElementById("cv" + i), r.plot.test, r.plot.tau));
     const kept = res.every((r) => r.wrong <= alpha), auto = res.reduce((a, r) => a + r.auto, 0) / res.length;
-    $("#summary").innerHTML = `With a promise of <b>at most ${(alpha * 100).toFixed(1)}% wrong bills</b>${mode === "hp" ? " (kept with 90% confidence)" : ""}, TULA charges about <b>${Math.round(auto * 100)}%</b> of cars automatically and ${kept ? "keeps the promise in <b>every</b> group" : "goes over in a group on this split (the promise is about the average over splits)"}. The other cars are not let off: they wait for another camera or a person.`;
+    $("#summary").innerHTML = `With a promise of <b>at most ${(alpha * 100).toFixed(1)}% wrong bills</b>${mode === "hp" ? " (kept with 90% confidence)" : ""}, TULA charges about <b>${Math.round(auto * 100)}%</b> of cars automatically and ${kept ? "keeps the promise in <b>every</b> group" : (sel === "all" ? "lands just over it in one group across these 30 shuffles. The promise is about the long-run average; over 200 shuffles every group stays under 5%" : "goes over in one group on this single shuffle. That can happen: the promise is about the average over many shuffles")}. The other cars are not let off: they wait for another camera or a person.`;
     versus();
   }
 
