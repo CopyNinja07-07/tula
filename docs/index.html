@@ -144,6 +144,10 @@ footer { padding-block: 34px 56px; color: var(--muted); font-size: 14px; border-
 .try { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
 .try button { font: inherit; font-size: 13.5px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; transition: border-color .2s, background .2s; }
 .try button:hover { border-color: var(--g2); background: color-mix(in srgb, var(--g2) 10%, transparent); }
+.curious { border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+.curious summary { cursor: pointer; color: var(--muted); font-size: 14.5px; }
+.curious[open] summary { margin-bottom: 10px; }
+.curious .note { margin-top: 10px; }
 .summary { margin: 0; font-size: 16.5px; line-height: 1.55; padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--g1) 10%, transparent); border: 1px solid color-mix(in srgb, var(--g2) 22%, transparent); }
 .summary b { color: var(--g2); }
 .plain-line { margin: 0; font-size: 14px; color: var(--muted); }
@@ -161,78 +165,103 @@ footer { padding-block: 34px 56px; color: var(--muted); font-size: 14px; border-
 <div class="bar"><div class="wrap">
   <a class="logo" href="#top" aria-label="TULA home"><svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#10b981"/><stop offset="1" stop-color="#bef264"/></linearGradient></defs><path d="M12 24h40M32 14v38M20 24l-8 14h16zM44 24l-8 14h16zM22 52h20" stroke="url(#lg)" stroke-width="4.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/></svg>TULA</a>
   <nav aria-label="Sections">
-    <a href="#lab">Live lab</a><a href="#results">Results</a><a href="demo/">Toll desk</a>
-    <a href="https://github.com/CopyNinja07-07/tula/blob/main/docs/WHITEPAPER.md">Whitepaper</a>
+    <a href="#problem">The problem</a><a href="#how">How it works</a><a href="#results">Results</a><a href="#try">Try it yourself</a><a href="demo/">Toll desk</a>
     <a href="https://github.com/CopyNinja07-07/tula">Code</a>
   </nav>
 </div></div>
 
 <div class="wrap" id="top">
   <header class="hero">
-    <span class="kicker"><i></i>Meta Global AI Developer Hackathon 2026 · Indie track</span>
-    <h1>Before an AI fines someone, it should <span class="grad">weigh the evidence.</span> <span class="deva grad">तुला</span></h1>
-    <p class="lede">India's new barrier-free tolls bill a car from a photo, with no barrier and no person checking. <strong>TULA</strong> sits between the camera and the bill. Meta <strong>SAM 3.1</strong> finds the plate, two readers that never see each other's answer read it (one of them Meta <strong>Muse Glimmer 30B</strong>), and a conformal risk controller decides <strong>charge</strong>, <strong>hold</strong> or <strong>send to a human</strong>, so wrong charges stay under a promise you can state, in fog and in clear light alike.</p>
+    <span class="kicker"><i></i>Meta Global AI Developer Hackathon 2026 · Indie track · Build for Your World</span>
+    <h1>An AI should <span class="grad">weigh the evidence</span> before it fines anyone. <span class="deva grad">तुला</span></h1>
+    <p class="lede"><strong>TULA</strong> checks automatic toll bills before they are sent. When a camera reads a number plate, TULA asks: is the evidence strong enough to charge this car? If yes, it charges. If not, it waits for another camera or asks a person. And it keeps a written promise: <strong>at most 5 wrong bills in every 100</strong>, in fog as well as in sunshine.</p>
     <div class="cta">
-      <a class="btn primary" href="#lab">Try the live lab →</a>
-      <a class="btn" href="demo/">Open the toll desk</a>
-      <a class="btn" href="https://github.com/CopyNinja07-07/tula">Read the code</a>
+      <a class="btn primary" href="#problem">Start here: the problem ↓</a>
+      <a class="btn" href="#try">Try it yourself</a>
+      <a class="btn" href="demo/">See real cars in the toll desk</a>
     </div>
     <div class="art"><img src="assets/scale.svg" alt="Animated balance scale: agreeing plate reads tip it to charge, a contradicting FASTag tips it to review, fog leaves it level and the passage is held" width="900" height="360"></div>
   </header>
 
-  <section class="reveal" aria-labelledby="h-numbers">
-    <h2 id="h-numbers">On <span class="grad">1,050 real plate photos</span></h2>
-    <p class="sub">Photos and both readers' answers are real. FASTags and the registry are simulated, because no public data links them. Mean of 200 random splits, promise 5% per group.</p>
-    <div class="num-row">
-      <div class="num"><b data-count="17.0" data-suffix="%">17.0%</b><span>wrong charges from today's tag-first biller</span></div>
-      <div class="num"><b class="over" data-count="12.2" data-suffix="%">12.2%</b><span>wrong in clear weather with one "90% sure" threshold</span></div>
-      <div class="num"><b class="grad" data-count="4.3" data-suffix="%">4.3%</b><span>wrong with TULA, under 5% in every group</span></div>
-      <div class="num"><b class="grad" data-count="86" data-suffix="%" data-dp="0">86%</b><span>of traffic TULA still charges automatically</span></div>
+  <section id="problem" class="reveal" aria-labelledby="h-problem">
+    <h2 id="h-problem">The problem: <span class="grad">nobody checks the bill</span></h2>
+    <p class="sub">India is switching to toll roads with no barrier. Cars drive under a camera at full speed, and a bill follows automatically. That is fast, but it means no person ever looks at the bill before it is sent.</p>
+    <div class="steps">
+      <div class="step"><b>1</b><h3>A camera reads the plate</h3><p>Software turns the photo into text, like <span class="mono">MH12AB1234</span>, and bills that car's owner, or the owner of its FASTag.</p></div>
+      <div class="step"><b>2</b><h3>One wrong digit bills a stranger</h3><p>Read <span class="mono">1234</span> as <span class="mono">1284</span> and someone who was never there gets the bill. In India an unpaid toll notice doubles after 72 hours. A swapped FASTag or a cloned plate does the same.</p></div>
+      <div class="step"><b>3</b><h3>Today's rule cannot say how often</h3><p>Systems charge when the model says it is "90% sure". But being sure is not being right, and nobody can say how many innocent drivers that rule bills, especially in fog.</p></div>
     </div>
   </section>
 
-  <section class="reveal" aria-labelledby="h-how">
-    <h2 id="h-how">How a passage is <span class="grad">weighed</span></h2>
-    <p class="sub">The two readers are kept blind to each other on purpose: agreement only counts as evidence if neither could copy the other.</p>
+  <section id="how" class="reveal" aria-labelledby="h-how">
+    <h2 id="h-how">How TULA works, <span class="grad">in four steps</span></h2>
+    <p class="sub">Two Meta AI models look at the photo. Plain code checks their answers against the records. A small statistical rule decides.</p>
     <div class="art"><img src="assets/pipeline.svg" alt="Animated pipeline: a car passes the gantry, SAM 3.1 boxes the plate, two readers read it, the evidence check and the controller produce charge, hold or review" width="900" height="312"></div>
+    <div class="steps" style="margin-top:16px">
+      <div class="step"><b>1</b><h3>Find</h3><p>Meta <strong>SAM 3.1</strong> finds the number plate and the car in the photo, just from the words "license plate" and "vehicle".</p></div>
+      <div class="step"><b>2</b><h3>Read, twice</h3><p>Two readers read the plate without seeing each other's answer: an open-source plate reader, and Meta <strong>Muse Glimmer 30B</strong>, which also sees the car's make, colour and type.</p></div>
+      <div class="step"><b>3</b><h3>Check</h3><p>Do the two reads agree? Does the FASTag belong to this plate? Does the car look like the registered one? Every "no" adds doubt.</p></div>
+      <div class="step"><b>4</b><h3>Decide, with a promise</h3><p><strong style="color:var(--charge)">Charge</strong> if the doubt is low enough, <strong style="color:var(--hold)">hold</strong> for the next camera if it is close, or <strong style="color:var(--review)">send to a person</strong> with a written reason.</p></div>
+    </div>
   </section>
 
-  <section id="lab" class="reveal" aria-labelledby="h-lab">
-    <h2 id="h-lab">Live lab: set the promise, <span class="grad">watch the cut-offs move</span></h2>
-    <p class="sub">You are the toll operator. Choose how many wrong bills you can accept, and TULA works out, for each kind of photo, how sure it must be before it charges anyone. Everything below is computed live in your browser from the real photos' scores.</p>
+  <section class="reveal" aria-labelledby="h-idea">
+    <h2 id="h-idea">The one idea that <span class="grad">makes it safe</span></h2>
+    <p class="sub">How much doubt is "low enough"? TULA does not guess. You set the promise, for example "at most 5 wrong bills in 100". TULA then looks at past cars where the right answer is known and finds the highest doubt it can accept while still keeping that promise. It does this <strong>separately for fog, clear light and each kind of plate</strong>, because a model that is careful in fog can be over-confident in sunshine. If a group has too few checked cars to make the promise, TULA never charges it automatically. The maths behind this is called <em>conformal risk control</em>, and it comes with a proof.</p>
+  </section>
+
+  <section id="results" class="reveal" aria-labelledby="h-numbers">
+    <h2 id="h-numbers">What happened on <span class="grad">1,050 real plate photos</span></h2>
+    <p class="sub">The photos and both models' answers are real. The FASTags and the vehicle registry are simulated, because no public data links them. Averaged over 200 random trials, with a promise of at most 5% wrong bills.</p>
+    <div class="num-row">
+      <div class="num"><b data-count="17.0" data-suffix="%">17.0%</b><span>of bills go to the wrong person with today's rule (trust the tag, else the plate)</span></div>
+      <div class="num"><b class="over" data-count="12.2" data-suffix="%">12.2%</b><span>wrong in clear weather with one "charge if 90% sure" rule</span></div>
+      <div class="num"><b class="grad" data-count="4.3" data-suffix="%">4.3%</b><span>wrong with TULA, and under 5% in every group</span></div>
+      <div class="num"><b class="grad" data-count="86" data-suffix="%" data-dp="0">86%</b><span>of cars TULA still charges straight away; the rest wait or go to a person</span></div>
+    </div>
+    <div style="height:16px"></div>
+    <div class="art"><img src="assets/verdict.svg" alt="Bar chart of wrong charges per group: today's biller 14 to 19 percent, one threshold 12.2 percent in clear and 7.0 percent on the Indian set, TULA 3.6 to 4.6 percent" width="900" height="422"></div>
+  </section>
+
+  <section id="try" class="reveal" aria-labelledby="h-lab">
+    <span id="lab"></span>
+    <h2 id="h-lab">Try it yourself: <span class="grad">how strict should TULA be?</span></h2>
+    <p class="sub">This is an interactive demo running in your browser on the real results. Pretend you run the toll road. Move the slider to choose how many wrong bills you will accept, and watch what TULA does with the cars from each kind of photo. Nothing is pre-made: every number is recalculated when you move the slider.</p>
     <div class="steps">
-      <div class="step"><b>1</b><h3>Every car gets a doubt score</h3><p>From 0 (both readers agree, the FASTag matches, the car looks right) to 1 (no evidence at all). Each dot in the charts is one car.</p></div>
-      <div class="step"><b>2</b><h3>Checked cars set the line</h3><p>On cars whose right answer we know, TULA finds the highest doubt it can accept and still keep your promise. That line is the cut-off <span class="mono">τ</span>.</p></div>
-      <div class="step"><b>3</b><h3>New cars test it</h3><p>Cars left of the line are charged; the rest wait for the next camera or a person. The numbers show what really happened to cars TULA had never seen.</p></div>
+      <div class="step"><b>1</b><h3>Each dot is a car</h3><p>Its position is the car's doubt: far left, everything agrees; far right, nothing does. Green dots would be billed correctly, red dots would bill the wrong person.</p></div>
+      <div class="step"><b>2</b><h3>Your promise sets the line</h3><p>Using other cars where the right answer is known, TULA draws a line at the highest doubt that still keeps your promise. Cars left of the line are charged.</p></div>
+      <div class="step"><b>3</b><h3>The numbers check it</h3><p>The dots are cars TULA had not seen when it drew the line, so the numbers show how the promise holds up on new traffic.</p></div>
     </div>
     <div class="lab">
       <div class="try" role="group" aria-label="Try a setting"><span>Try:</span>
         <button type="button" data-a="1">Very strict (1%)</button>
         <button type="button" data-a="5">The 5% promise</button>
         <button type="button" data-a="12">Relaxed (12%)</button>
-        <button type="button" data-hp="1">Promise per day, not on average</button>
+        <button type="button" data-hp="1">Keep it every time, not just on average</button>
       </div>
       <div class="controls">
-        <div class="ctl"><label for="alpha">Promise: wrong charges at most</label><output id="alpha-out">5.0%</output>
+        <div class="ctl"><label for="alpha">Your promise: wrong bills at most</label><output id="alpha-out">5.0%</output>
           <input id="alpha" type="range" min="0.5" max="15" step="0.5" value="5" aria-describedby="alpha-help"></div>
-        <div class="ctl"><label id="mode-l">Guarantee</label>
+        <div class="ctl"><label id="mode-l">How firmly to keep it</label>
           <div class="seg" role="group" aria-labelledby="mode-l">
             <button type="button" data-mode="avg" aria-pressed="true">On average</button>
-            <button type="button" data-mode="hp" aria-pressed="false">90% confidence</button>
+            <button type="button" data-mode="hp" aria-pressed="false">Every time, 90% sure</button>
           </div></div>
-        <div class="ctl"><label for="split">Random split</label>
+        <div class="ctl"><label for="split">Which data shuffle</label>
           <select id="split"><option value="all">All splits, averaged</option></select></div>
       </div>
-      <div class="formula" id="alpha-help" aria-label="The rule each group's cut-off follows">τ<sub>g</sub> = the largest score with &nbsp;(wrong charges in group g's calibration set at or below τ<sub>g</sub> + 1) / (n<sub>g</sub> + 1) ≤ α</div>
-      <p class="note">"On average" means over many calibration sets: one split on its own can land a little above the promise, and the average over splits stays under it. "90% confidence" uses a Clopper-Pearson bound instead, so each split stays under the promise with probability at least 90%, at the cost of charging less.</p>
+      <details class="curious"><summary>For the curious: the exact rule and what "on average" means</summary>
+        <div class="formula" id="alpha-help" aria-label="The rule each group's cut-off follows">τ<sub>g</sub> = the largest score with &nbsp;(wrong charges in group g's calibration set at or below τ<sub>g</sub> + 1) / (n<sub>g</sub> + 1) ≤ α</div>
+        <p class="note">"On average" means over many calibration sets: one split on its own can land a little above the promise, and the average over splits stays under it. "90% confidence" uses a Clopper-Pearson bound instead, so each split stays under the promise with probability at least 90%, at the cost of charging less.</p>
+      </details>
       <p class="summary" id="summary" aria-live="polite"></p>
       <div class="groups" id="groups"></div>
-      <div class="legend"><span><i class="dot" style="background:var(--charge)"></i>charging would be right</span><span><i class="dot" style="background:var(--review)"></i>charging would be wrong</span><span>│ cut-off τ: left of it is charged, right of it waits for evidence or a human</span></div>
+      <div class="legend"><span><i class="dot" style="background:var(--charge)"></i>charging would be right</span><span><i class="dot" style="background:var(--review)"></i>charging would be wrong</span><span>│ the line: cars to its left are charged, cars to its right wait for another camera or a person</span></div>
     </div>
   </section>
 
   <section class="reveal" aria-labelledby="h-vs">
-    <h2 id="h-vs">Versus one <span class="grad">confidence threshold</span></h2>
+    <h2 id="h-vs">Why not just one <span class="grad">"90% sure" rule</span>?</h2>
     <p class="sub">A single "charge when the model is this sure" rule cannot keep a promise per group: the same setting that is safe in fog is unsafe in clear light, because Muse Glimmer is careful in fog and over-confident when it can see. Move it and watch.</p>
     <div class="lab">
       <div class="ctl" style="max-width:420px"><label for="thr">Charge when Glimmer is at least this sure</label><output id="thr-out">0.90</output>
@@ -242,12 +271,11 @@ footer { padding-block: 34px 56px; color: var(--muted); font-size: 14px; border-
     </div>
   </section>
 
-  <section id="results" class="reveal" aria-labelledby="h-res">
-    <h2 id="h-res">The <span class="grad">verdict</span></h2>
-    <p class="sub">Per group, against the 5% promise. Full tables in <a href="https://github.com/CopyNinja07-07/tula/tree/main/experiments/results">experiments/results</a>.</p>
-    <div class="art"><img src="assets/verdict.svg" alt="Bar chart of wrong charges per group: today's biller 14 to 19 percent, one threshold 12.2 percent in clear and 7.0 percent on the Indian set, TULA 3.6 to 4.6 percent" width="900" height="422"></div>
-    <div style="height:16px"></div>
+  <section class="reveal" aria-labelledby="h-res">
+    <h2 id="h-res">We also <span class="grad">attacked it</span></h2>
+    <p class="sub">We let fake cars with cloned plates and swapped FASTags take up to 30% of the traffic, after TULA had set its lines. Its wrong bills stayed under the limit the maths allows (promise + attacker share), while today's rule climbed to 42%.</p>
     <div class="art"><img src="assets/redteam.svg" alt="Line chart: as attackers take up to 30 percent of traffic, TULA's wrong charges stay under the bound of promise plus attacker share" width="900" height="380"></div>
+    <div class="cta" style="margin-top:18px"><a class="btn primary" href="demo/">See individual cars in the toll desk →</a></div>
   </section>
 
   <section class="reveal" aria-labelledby="h-meta">
@@ -354,9 +382,9 @@ footer { padding-block: 34px 56px; color: var(--muted); font-size: 14px; border-
       c.beginPath(); c.arc(X(s), y, test.w[i] ? 3 : 2.2, 0, 7); c.fill(); });
     c.globalAlpha = 1;
     if (tau !== null) { c.strokeStyle = css("--ink"); c.lineWidth = 2; c.beginPath(); c.moveTo(X(tau), 2); c.lineTo(X(tau), h - 16); c.stroke();
-      c.fillStyle = css("--ink"); c.font = "12px " + css("--mono"); c.fillText("τ " + tau.toFixed(2), Math.min(X(tau) + 5, w - 60), h - 3); }
+      c.fillStyle = css("--ink"); c.font = "12px " + css("--mono"); c.fillText("line " + tau.toFixed(2), Math.min(X(tau) + 5, w - 60), h - 3); }
     c.fillStyle = css("--muted"); c.font = "11px " + css("--mono"); c.fillText("0 no doubt", pad, h - 3);
-    if (tau === null) c.fillText("no certificate: nothing charged", Math.max(pad, w / 2 - 100), h / 2);
+    if (tau === null) c.fillText("too little data: nothing charged automatically", Math.max(pad, w / 2 - 100), h / 2);
   }
 
   function render() {
@@ -365,12 +393,12 @@ footer { padding-block: 34px 56px; color: var(--muted); font-size: 14px; border-
     const splits = sel === "all" ? L.splits : [L.splits[+sel]];
     const res = evaluate(alpha, mode === "hp" ? 0.1 : null, splits);
     $("#groups").innerHTML = res.map((r, i) => `
-      <div class="g"><h3>${NAMES[r.name]} <span class="badge ${r.cert === r.nsplits ? "ok" : "no"}">${r.cert === r.nsplits ? "certified" : r.cert ? `certified in ${r.cert}/${r.nsplits}` : "no certificate"}</span></h3>
+      <div class="g"><h3>${NAMES[r.name]} <span class="badge ${r.cert === r.nsplits ? "ok" : "no"}">${r.cert === r.nsplits ? "promise can be kept" : r.cert ? `promise kept in ${r.cert} of ${r.nsplits} shuffles` : "too little data: no auto-charge"}</span></h3>
         <div class="stats">
-          <div><span>wrong charges (test)</span><b class="${r.wrong > alpha ? "over" : ""}">${(r.wrong * 100).toFixed(2)}%</b></div>
-          <div><span>charged automatically</span><b>${(r.auto * 100).toFixed(1)}%</b></div>
-          <div><span>calibration passages</span><b>${Math.round(r.ncal)}</b></div>
-          <div><span>cut-off τ ${r.tau.length > 1 ? "(mean)" : ""}</span><b>${r.tau.length ? (r.tau.reduce((a, b) => a + b, 0) / r.tau.length).toFixed(3) : "none"}</b></div>
+          <div><span>wrong bills</span><b class="${r.wrong > alpha ? "over" : ""}">${(r.wrong * 100).toFixed(2)}%</b></div>
+          <div><span>charged straight away</span><b>${(r.auto * 100).toFixed(1)}%</b></div>
+          <div><span>checked cars used for the line</span><b>${Math.round(r.ncal)}</b></div>
+          <div><span>where the line sits (0 to 1)</span><b>${r.tau.length ? (r.tau.reduce((a, b) => a + b, 0) / r.tau.length).toFixed(3) : "none"}</b></div>
         </div>
         <p class="plain-line">${r.cert === 0 ? "Too few checked cars to make this promise, so nothing in this group is charged automatically." : `Out of 100 cars like these, about <b>${Math.round(r.auto * 100)}</b> are charged straight away and about <b>${(r.wrong * 100).toFixed(1)}</b> of those 100 are charged wrongly.`}</p>
         <canvas id="cv${i}" role="img" aria-label="Test passages of ${NAMES[r.name]} by doubt score, with the cut-off"></canvas>
