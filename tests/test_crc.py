@@ -14,7 +14,7 @@ def draw(n, rng):
     return out
 
 
-def test_risk(tau, test):
+def measured_risk(tau, test):
     return sum(1 for s, w in test if tau is not None and s <= tau and w) / len(test)
 
 
@@ -23,7 +23,7 @@ class CRCTest(unittest.TestCase):
         rng, alpha, risks = random.Random(0), 0.02, []
         for _ in range(300):
             cal, test = draw(400, rng), draw(2000, rng)
-            risks.append(test_risk(crc_threshold([s for s, _ in cal], [w for _, w in cal], alpha), test))
+            risks.append(measured_risk(crc_threshold([s for s, _ in cal], [w for _, w in cal], alpha), test))
         self.assertLessEqual(sum(risks) / len(risks), alpha)
 
     def test_high_probability_mode(self):
@@ -31,7 +31,7 @@ class CRCTest(unittest.TestCase):
         for _ in range(300):
             cal, test = draw(400, rng), draw(20000, rng)
             tau = crc_threshold([s for s, _ in cal], [w for _, w in cal], alpha, delta)
-            over += test_risk(tau, test) > alpha
+            over += measured_risk(tau, test) > alpha
         self.assertLessEqual(over / 300, delta)
 
     def test_small_group_is_not_certified(self):

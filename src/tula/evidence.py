@@ -15,6 +15,7 @@ from tula.simulate import TOLL_CLASSES
 WEIGHTS = {
     "plate_disagree": 0.35,   # Reader A vs Reader B
     "tag_mismatch": 0.35,     # tag's registered plate vs what the cameras read
+    "readers_vs_tag": 0.50,   # both readers agree on one plate and the tag is someone else's
     "type_mismatch": 0.25,    # vehicle seen vs the billed vehicle's toll class
     "colour_mismatch": 0.15,
     "make_mismatch": 0.15,
@@ -72,11 +73,19 @@ def check(read_a: dict | None, read_b: dict | None, tag_read: str | None, tag_cl
     sig["no_tag"] = float(tag_read is None)
     if target is not None:
         sig["tag_mismatch"] = plate_gap(best, target.plate) if tag_read is not None else 0.0
+        # Two readers that cannot see each other agreeing exactly is strong evidence,
+        # even when the tag's plate differs by only one character.
+        if (tag_read is not None and a and b and a.get("plate_text")
+                and a.get("plate_text") == b.get("plate_text") != target.plate):
+            sig["readers_vs_tag"] = 1.0
         if b and "vehicle_type" in b:
             allowed = TOLL_CLASSES[billed_class]["vehicle_types"]
             sig["type_mismatch"] = float(b["vehicle_type"] not in allowed)
-            sig["colour_mismatch"] = float(b["colour"] != target.colour)
-            sig["make_mismatch"] = float(b["make"] != target.make)
+            # A reader that could not tell (None) is no evidence either way.
+            if b.get("colour") and target.colour:
+                sig["colour_mismatch"] = float(b["colour"] != target.colour)
+            if b.get("make") and target.make:
+                sig["make_mismatch"] = float(b["make"] != target.make)
 
     score = 1.0 if target is None else min(1.0, sum(WEIGHTS[k] * v for k, v in sig.items()))
     return Evidence(target.vehicle_id if target else None, fee, sig, round(score, 4))

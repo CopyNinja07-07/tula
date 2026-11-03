@@ -5,3 +5,7 @@ pyarrow>=15
 fast-plate-ocr[onnx]>=1.1
 numpy
 open-image-models>=0.4
+mlx-vlm>=0.4.3; sys_platform == "darwin" and platform_machine == "arm64"   # SAM 3.1 on Apple Silicon
+huggingface_hub
+pytest
+kaggle            # only to push the Glimmer reader to Kaggle

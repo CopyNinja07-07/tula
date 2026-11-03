@@ -3,89 +3,89 @@
     {
       "alpha": 0.002,
       "wrong_charge_rate": 0.0009601937086438307,
-      "automation_rate": 0.5083599473980838,
-      "review_rate": 0.10687373452731333
+      "automation_rate": 0.5082973260692591,
+      "review_rate": 0.10735383138163525
     },
     {
       "alpha": 0.003,
       "wrong_charge_rate": 0.0018160185359133321,
-      "automation_rate": 0.7407894462187155,
-      "review_rate": 0.08449704636065711
+      "automation_rate": 0.7406015822322416,
+      "review_rate": 0.0846222890183063
     },
     {
       "alpha": 0.005,
-      "wrong_charge_rate": 0.0035276681904523348,
-      "automation_rate": 0.8391675538021584,
-      "review_rate": 0.0570897781117582
+      "wrong_charge_rate": 0.003506794414177469,
+      "automation_rate": 0.8388126996054857,
+      "review_rate": 0.05721502076940739
     },
     {
       "alpha": 0.0075,
-      "wrong_charge_rate": 0.005907278685787045,
-      "automation_rate": 0.876260254242595,
-      "review_rate": 0.03538105078589768
+      "wrong_charge_rate": 0.00588640490951218,
+      "automation_rate": 0.8758636524933726,
+      "review_rate": 0.0331058091719373
     },
     {
       "alpha": 0.01,
-      "wrong_charge_rate": 0.00791116120817417,
-      "automation_rate": 0.8871354916818002,
-      "review_rate": 0.017304360531863818
+      "wrong_charge_rate": 0.007890287431899306,
+      "automation_rate": 0.886697142380028,
+      "review_rate": 0.022000960193708643
     },
     {
       "alpha": 0.015,
-      "wrong_charge_rate": 0.012461644436094934,
-      "automation_rate": 0.9155029536393429,
+      "wrong_charge_rate": 0.012399023107270337,
+      "automation_rate": 0.9153777109816937,
       "review_rate": 0.0006053395119711107
     },
     {
       "alpha": 0.02,
-      "wrong_charge_rate": 0.01734610808441355,
-      "automation_rate": 0.9329951781576805,
+      "wrong_charge_rate": 0.017283486755588953,
+      "automation_rate": 0.9330160519339554,
       "review_rate": 0.00016699021019892708
     },
     {
       "alpha": 0.03,
-      "wrong_charge_rate": 0.02684367628947753,
-      "automation_rate": 0.9511136159642641,
+      "wrong_charge_rate": 0.026697559855553468,
+      "automation_rate": 0.9511553635168138,
       "review_rate": 0.0
     },
     {
       "alpha": 0.05,
-      "wrong_charge_rate": 0.048448034733963724,
-      "automation_rate": 0.9826956394681362,
+      "wrong_charge_rate": 0.04316696933642265,
+      "automation_rate": 0.9779990398062913,
       "review_rate": 0.0
     }
   ],
   "plans": [
     {
       "budget": 0.02,
-      "alpha": 0.01,
-      "wrong_charge_rate": 0.00791116120817417,
-      "automation_rate": 0.8871354916818002,
-      "review_rate": 0.017304360531863818,
+      "alpha": 0.015,
+      "wrong_charge_rate": 0.012399023107270337,
+      "automation_rate": 0.9153777109816937,
+      "review_rate": 0.0006053395119711107,
       "held_over_budget": 0.0
     },
     {
       "budget": 0.05,
       "alpha": 0.0075,
-      "wrong_charge_rate": 0.005907278685787045,
-      "automation_rate": 0.876260254242595,
-      "review_rate": 0.03538105078589768,
+      "wrong_charge_rate": 0.00588640490951218,
+      "automation_rate": 0.8758636524933726,
+      "review_rate": 0.0331058091719373,
       "held_over_budget": 0.0
     },
     {
       "budget": 0.1,
       "alpha": 0.003,
       "wrong_charge_rate": 0.0018160185359133321,
-      "automation_rate": 0.7407894462187155,
-      "review_rate": 0.08449704636065711,
+      "automation_rate": 0.7406015822322416,
+      "review_rate": 0.0846222890183063,
       "held_over_budget": 0.0
     },
     {
       "budget": 0.2,
       "alpha": 0.002,
       "wrong_charge_rate": 0.0009601937086438307,
-      "automation_rate": 0.5083599473980838,
-      "review_rate": 0.10687373452731333,
+      "automation_rate": 0.5082973260692591,
+      "review_rate": 0.10735383138163525,
       "held_over_budget": 0.0
     }
   ]

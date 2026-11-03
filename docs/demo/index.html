@@ -1,0 +1,220 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TULA Toll Desk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;800&family=Overpass+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a toll-booth operator's desk. Passage queue on the left, the camera frame and the evidence slip on the right. */
+:root {
+  --bg: #f3f5f2;          /* concrete */
+  --panel: #ffffff;
+  --ink: #17201b;
+  --muted: #5d6b63;
+  --line: #d6ddd8;
+  --sign: #0b5d3b;        /* highway sign green */
+  --sign-ink: #ffffff;
+  --charge: #1f7a45;
+  --hold: #b7791f;
+  --review: #b42318;
+  --plate: #fbfbf7;
+  --plate-ink: #111;
+  --ind: #1d4fa3;
+  --display: "Overpass", "Highway Gothic", "Arial Narrow", system-ui, sans-serif;
+  --body: "Overpass", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Overpass Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #101613; --panel: #18201c; --ink: #e8eee9; --muted: #9aa9a0; --line: #2b3832;
+  --sign: #14804f; --charge: #3fb36f; --hold: #e0a43a; --review: #f0645a;
+  --plate: #ecece4; --plate-ink: #111; --ind: #3a6fd0; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #101613; --panel: #18201c; --ink: #e8eee9; --muted: #9aa9a0; --line: #2b3832;
+  --sign: #14804f; --charge: #3fb36f; --hold: #e0a43a; --review: #f0645a;
+  --plate: #ecece4; --plate-ink: #111; --ind: #3a6fd0; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 40px; display: grid; gap: 20px; }
+header.sign { background: var(--sign); color: var(--sign-ink); border-radius: 10px; padding: 18px 22px; display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: baseline; justify-content: space-between; border: 3px solid var(--sign-ink); outline: 3px solid var(--sign); }
+header.sign h1 { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(28px, 4vw, 40px); letter-spacing: 0.04em; }
+header.sign p { margin: 0; font-size: 16px; max-width: 60ch; text-wrap: balance; }
+.promise { font-family: var(--mono); font-size: 13px; background: rgba(255,255,255,0.14); padding: 4px 10px; border-radius: 6px; white-space: nowrap; }
+.desk { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 860px) { .desk { grid-template-columns: minmax(0, 1fr); } }
+.queue { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: grid; gap: 10px; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.filters select { font: inherit; font-size: 13px; padding: 4px 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); }
+.list { display: grid; gap: 6px; max-height: 640px; overflow-y: auto; }
+@media (max-width: 860px) { .list { max-height: 260px; } }
+.item { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; text-align: left; font: inherit; color: inherit; background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; cursor: pointer; }
+.item:hover { border-color: var(--muted); }
+.item[aria-current="true"] { border-color: var(--sign); box-shadow: inset 3px 0 0 var(--sign); }
+.item .plate-sm { font-family: var(--mono); font-weight: 600; letter-spacing: 0.04em; }
+.item .meta { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
+.chip { font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; color: #fff; align-self: center; }
+.chip.charge { background: var(--charge); } .chip.hold { background: var(--hold); } .chip.review { background: var(--review); }
+.stage { display: grid; gap: 16px; min-width: 0; }
+.row { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; }
+@media (max-width: 1060px) { .row { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; min-width: 0; }
+.label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin: 0 0 8px; }
+.frame img { width: 100%; border-radius: 6px; display: block; background: #000; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--muted); margin-top: 8px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border: 2px solid; border-radius: 2px; vertical-align: -2px; margin-right: 4px; }
+.readers { display: grid; gap: 12px; }
+.reader h3 { margin: 0 0 6px; font-size: 14px; font-weight: 600; }
+.reader small { color: var(--muted); font-weight: 400; }
+/* Indian high-security plate: white plate, blue IND strip. */
+.plate { display: inline-flex; align-items: stretch; border: 2px solid #222; border-radius: 6px; background: var(--plate); color: var(--plate-ink); overflow: hidden; max-width: 100%; }
+.plate .ind { background: var(--ind); color: #fff; font: 600 10px/1 var(--body); display: grid; place-items: center; padding: 0 5px; writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.1em; }
+.plate .txt { font: 600 clamp(18px, 3vw, 24px)/1.6 var(--mono); letter-spacing: 0.08em; padding: 0 12px; white-space: nowrap; }
+.plate.none .txt { color: #888; font-style: italic; letter-spacing: 0; font-size: 15px; }
+.conf { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
+.bar { flex: 1; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; max-width: 160px; }
+.bar b { display: block; height: 100%; background: var(--muted); }
+.truth { font-size: 12px; color: var(--muted); }
+.mark-ok { color: var(--charge); font-weight: 600; } .mark-bad { color: var(--review); font-weight: 600; }
+table.ledger { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+table.ledger td { padding: 5px 0; border-bottom: 1px solid var(--line); }
+table.ledger td:last-child { text-align: right; font-family: var(--mono); }
+.gauge { position: relative; height: 26px; margin: 18px 0 6px; border-radius: 4px; background: linear-gradient(90deg, color-mix(in srgb, var(--charge) 30%, transparent), color-mix(in srgb, var(--review) 30%, transparent)); }
+.gauge .tau { position: absolute; top: -8px; bottom: -8px; width: 2px; background: var(--ink); }
+.gauge .tau span { position: absolute; top: -18px; left: 4px; font: 11px var(--mono); white-space: nowrap; }
+.gauge .s { position: absolute; top: 3px; width: 20px; height: 20px; margin-left: -10px; border-radius: 50%; background: var(--panel); border: 3px solid var(--ink); }
+.gauge-scale { display: flex; justify-content: space-between; font: 11px var(--mono); color: var(--muted); }
+.verdict { display: grid; gap: 10px; }
+.verdict .big { font-family: var(--display); font-weight: 800; font-size: 30px; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; padding: 8px 16px; border-radius: 8px; justify-self: start; }
+.big.charge { background: var(--charge); } .big.hold { background: var(--hold); } .big.review { background: var(--review); }
+.note { margin: 0; font-size: 15px; max-width: 65ch; }
+.compare { font-size: 13px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 8px; }
+.sim { font-size: 12px; color: var(--muted); }
+.results { overflow-x: auto; }
+.results table { border-collapse: collapse; font-size: 13px; min-width: 640px; width: 100%; font-variant-numeric: tabular-nums; }
+.results th, .results td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: right; }
+.results th:first-child, .results td:first-child { text-align: left; }
+.results tr.tula td { font-weight: 600; }
+footer { font-size: 12px; color: var(--muted); max-width: 90ch; }
+button:focus-visible, select:focus-visible { outline: 2px solid var(--sign); outline-offset: 2px; }
+</style>
+
+<div class="wrap">
+  <header class="sign">
+    <h1>TULA</h1>
+    <p>Before an AI fines someone, it should weigh the evidence. Pick a toll passage to see what TULA decided and why.</p>
+    <span class="promise" id="promise">Promise: ≤ 5% wrong charges per group</span>
+  </header>
+
+  <div class="desk">
+    <aside class="queue" aria-label="Toll passages">
+      <p class="label">Passage queue</p>
+      <div class="filters">
+        <select id="f-set" aria-label="Photo set"><option value="">All photos</option><option value="foggy">Foggy</option><option value="clear">Clear</option><option value="indian">Indian plates</option></select>
+        <select id="f-dec" aria-label="Decision"><option value="">All decisions</option><option value="charge">Charge</option><option value="hold">Hold</option><option value="review">Review</option></select>
+      </div>
+      <div class="list" id="list"></div>
+    </aside>
+
+    <main class="stage" id="stage"></main>
+  </div>
+
+  <section class="card results" id="results" hidden></section>
+
+  <footer>
+    Photos: Foggy-Hazy License Plates (Mendeley, CC BY 4.0, plate text hand-labelled for TULA) and zenitsu09/indian-number-plate.
+    Boxes: Meta SAM 3.1. Reader A: open-source fast-plate-ocr. Reader B: Meta Muse Glimmer 30B.
+    The FASTag, registry and scenario on each passage are simulated; no real account or owner is shown.
+  </footer>
+</div>
+
+<script src="demo_data.js"></script>
+<script>
+(function () {
+  const D = window.TULA_DEMO || { cases: [] };
+  const SCEN = { clean: "Clean passage", tag_missing: "FASTag not read", tag_swap: "Swapped FASTag",
+                 cloned_plate: "Cloned plate", lookalike_clone: "Look-alike clone", wrong_class: "Tag in wrong toll class" };
+  const SETS = { foggy: "Foggy photo", clear: "Clear photo", indian: "Indian plate photo" };
+  const SIG = { plate_disagree: "Readers disagree on plate", tag_mismatch: "FASTag plate ≠ plate seen", readers_vs_tag: "Both readers agree, FASTag is someone else's",
+                type_mismatch: "Vehicle type ≠ toll class", colour_mismatch: "Colour ≠ registry",
+                make_mismatch: "Make ≠ registry", low_confidence: "Reader unsure", no_tag: "No FASTag read" };
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  $("#promise").textContent = `Promise: ≤ ${Math.round((D.alpha || 0.05) * 100)}% wrong charges per group`;
+  let current = 0;
+
+  function plate(text) {
+    return text ? `<span class="plate"><span class="ind">IND</span><span class="txt">${esc(text)}</span></span>`
+                : `<span class="plate none"><span class="ind">IND</span><span class="txt">could not read</span></span>`;
+  }
+  function reader(name, sub, r, truth) {
+    const c = Math.max(0, Math.min(1, r.plate_confidence || 0));
+    const ok = r.plate_text && r.plate_text === truth;
+    return `<div class="reader"><h3>${name} <small>${sub}</small></h3>${plate(r.plate_text)}
+      <div class="conf"><span>sure</span><span class="bar"><b style="width:${(c * 100).toFixed(0)}%"></b></span><span>${(c * 100).toFixed(0)}%</span>
+      <span class="${ok ? "mark-ok" : "mark-bad"}">${r.plate_text ? (ok ? "correct" : "wrong") : "abstained"}</span></div></div>`;
+  }
+
+  function render(i) {
+    const c = D.cases[i]; if (!c) return;
+    current = i;
+    document.querySelectorAll(".item").forEach((el) => el.setAttribute("aria-current", String(+el.dataset.i === i)));
+    const tau = c.tau == null || !isFinite(c.tau) ? null : Math.max(0, Math.min(1, c.tau));
+    const sig = Object.entries(c.signals).filter(([, v]) => v > 0)
+      .map(([k, v]) => `<tr><td>${SIG[k] || k}</td><td>${v.toFixed(2)}</td></tr>`).join("") || `<tr><td>No warning signs</td><td>0</td></tr>`;
+    const b = c.b, reg = c.registry;
+    const naive = c.naive_wrong ? `<span class="mark-bad">would have charged the wrong account or amount</span>`
+                                : `<span class="mark-ok">would have charged correctly</span>`;
+    const tulaRes = c.decision === "charge" ? (c.wrong_if_charged ? `<span class="mark-bad">TULA charged wrongly here</span>` : `<span class="mark-ok">TULA charged correctly</span>`)
+                    : (c.wrong_if_charged ? `<span class="mark-ok">TULA avoided a wrong charge</span>` : `TULA asked for more evidence on a correct bill`);
+    $("#stage").innerHTML = `
+      <div class="row">
+        <div class="card frame"><p class="label">Camera frame · ${SETS[c.set]}</p>
+          <img src="${c.img}" alt="Toll camera photo with the plate and vehicle boxes drawn by SAM 3.1">
+          <div class="legend"><span><i style="border-color:#28dc78"></i>Plate (SAM 3.1${c.sam_plate ? ", " + Math.round(c.sam_plate * 100) + "% sure" : ""})</span><span><i style="border-color:#fac828"></i>Vehicle (SAM 3.1)</span><span>Hand label: <b style="font-family:var(--mono)">${esc(c.truth)}</b></span></div>
+        </div>
+        <div class="card readers"><p class="label">Two independent readers</p>
+          ${reader("Reader A", "open-source plate OCR, sees the plate crop only", c.a, c.truth)}
+          ${reader("Reader B", "Meta Muse Glimmer 30B, sees the whole photo", c.b, c.truth)}
+          <div class="truth">Glimmer sees: ${esc(b.vehicle_type)}, ${esc(b.make || "make unknown")}, ${esc(b.colour || "colour unknown")}${(b.image_issues || []).length ? " · issues: " + esc(b.image_issues.join(", ")) : ""}</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="card"><p class="label">Evidence check</p>
+          <p class="sim">Simulated FASTag and registry: <b>${SCEN[c.scenario]}</b>. Registered vehicle: ${esc(reg.vehicle_type)}, ${esc(reg.make || "?")}, ${esc(reg.colour || "?")}.</p>
+          <table class="ledger">${sig}</table>
+          <div class="gauge" role="img" aria-label="Doubt score ${c.score} against cut-off ${tau ?? "none"}">
+            ${tau != null ? `<div class="tau" style="left:${tau * 100}%"><span>cut-off ${tau.toFixed(2)}</span></div>` : ""}
+            <div class="s" style="left:${Math.max(0, Math.min(1, c.score)) * 100}%"></div>
+          </div>
+          <div class="gauge-scale"><span>0 · no doubt</span><span>doubt ${c.score.toFixed(2)}</span><span>1 · no evidence</span></div>
+        </div>
+        <div class="card verdict"><p class="label">TULA's decision</p>
+          <span class="big ${c.decision}">${c.decision}</span>
+          <p class="note">${esc(c.note)}</p>
+          <div class="compare">Today's biller (trust the tag, else the plate) ${naive}. ${tulaRes}.</div>
+        </div>
+      </div>`;
+  }
+
+  function list() {
+    const fs = $("#f-set").value, fd = $("#f-dec").value;
+    $("#list").innerHTML = D.cases.map((c, i) => ({ c, i })).filter(({ c }) => (!fs || c.set === fs) && (!fd || c.decision === fd))
+      .map(({ c, i }) => `<button class="item" data-i="${i}" aria-current="${i === current}">
+        <span class="plate-sm">${esc(c.truth)}</span><span class="chip ${c.decision}">${c.decision}</span>
+        <span class="meta">${SETS[c.set]} · ${SCEN[c.scenario]}</span></button>`).join("") || `<p class="sim">No passages match these filters.</p>`;
+  }
+  $("#list").addEventListener("click", (e) => { const b = e.target.closest(".item"); if (b) render(+b.dataset.i); });
+  $("#f-set").addEventListener("change", list); $("#f-dec").addEventListener("change", list);
+
+  function results() {
+    const s = D.summary; if (!s) return;
+    const sets = Object.keys(s.photos_by_set);
+    const rows = Object.entries(s.table).map(([m, t]) => `<tr class="${m.startsWith("TULA") ? "tula" : ""}"><td>${esc(m)}</td>
+      <td>${(t.wrong_mean * 100).toFixed(2)}%</td><td>${(t.auto_mean * 100).toFixed(1)}%</td>
+      ${sets.map((g) => `<td>${(t.group_wrong[g] * 100).toFixed(2)}%</td>`).join("")}</tr>`).join("");
+    const el = $("#results");
+    el.innerHTML = `<p class="label">Results on ${s.photos} real photos · mean of ${s.splits} random splits · promise ${Math.round(s.alpha * 100)}%</p>
+      <table><thead><tr><th>Method</th><th>Wrong charges</th><th>Charged automatically</th>${sets.map((g) => `<th>Wrong: ${g}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table>`;
+    el.hidden = false;
+  }
+  list(); render(0); results();
+})();
+</script>

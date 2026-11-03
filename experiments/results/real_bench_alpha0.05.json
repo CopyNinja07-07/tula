@@ -1,0 +1,326 @@
+{
+  "alpha": 0.05,
+  "delta": 0.1,
+  "splits": 200,
+  "photos": 1050,
+  "photos_by_set": {
+    "clear": 232,
+    "foggy": 232,
+    "indian": 586
+  },
+  "split_sizes": {
+    "fit": 211,
+    "cal": 415,
+    "test": 424
+  },
+  "scenarios": {
+    "clean": 0.8,
+    "tag_missing": 0.08,
+    "tag_swap": 0.05,
+    "cloned_plate": 0.04,
+    "wrong_class": 0.03
+  },
+  "independence": {
+    "clear": {
+      "photos": 232,
+      "a_wrong": 0.293,
+      "b_wrong": 0.091,
+      "both_wrong": 0.086,
+      "both_wrong_if_independent": 0.027,
+      "either_right": 0.914
+    },
+    "foggy": {
+      "photos": 232,
+      "a_wrong": 0.853,
+      "b_wrong": 0.629,
+      "both_wrong": 0.565,
+      "both_wrong_if_independent": 0.537,
+      "either_right": 0.435
+    },
+    "indian": {
+      "photos": 586,
+      "a_wrong": 0.676,
+      "b_wrong": 0.326,
+      "both_wrong": 0.283,
+      "both_wrong_if_independent": 0.22,
+      "either_right": 0.717
+    }
+  },
+  "table": {
+    "Today's biller (trust tag, else plate)": {
+      "wrong_mean": 0.17000858411175918,
+      "wrong_sd": 0.008589546460284078,
+      "auto_mean": 0.9998546752780754,
+      "review_mean": 0.00014532472192461772,
+      "group_wrong": {
+        "clear": 0.14136003042738238,
+        "foggy": 0.18884827119539332,
+        "indian": 0.17384218706691695
+      },
+      "group_auto": {
+        "clear": 1.0,
+        "foggy": 0.9993401060309011,
+        "indian": 1.0
+      }
+    },
+    "One threshold: Reader A >= 0.9": {
+      "wrong_mean": 0.03699456646345644,
+      "wrong_sd": 0.005251700766646726,
+      "auto_mean": 0.2748813587740382,
+      "review_mean": 0.7251186412259618,
+      "group_wrong": {
+        "clear": 0.08414179653311474,
+        "foggy": 0.02464640264108885,
+        "indian": 0.0233180940451667
+      },
+      "group_auto": {
+        "clear": 0.6597060837534963,
+        "foggy": 0.15193939128023506,
+        "indian": 0.17213454849469859
+      }
+    },
+    "One threshold: Glimmer >= 0.9": {
+      "wrong_mean": 0.06649025745021779,
+      "wrong_sd": 0.00578415323424905,
+      "auto_mean": 0.5216802478569406,
+      "review_mean": 0.4783197521430595,
+      "group_wrong": {
+        "clear": 0.12232862786688486,
+        "foggy": 0.0010647454340835364,
+        "indian": 0.0703008572188878
+      },
+      "group_auto": {
+        "clear": 0.9740982322228909,
+        "foggy": 0.00887849062010253,
+        "indian": 0.5455018934913172
+      }
+    },
+    "Fused score, fixed cut-off 0.3": {
+      "wrong_mean": 0.026438813265122825,
+      "wrong_sd": 0.0038215160615361434,
+      "auto_mean": 0.569200026554443,
+      "review_mean": 0.430799973445557,
+      "group_wrong": {
+        "clear": 0.02285836250209587,
+        "foggy": 0.0018559526181974974,
+        "indian": 0.03753822426754551
+      },
+      "group_auto": {
+        "clear": 0.8059267725158857,
+        "foggy": 0.2323256988005869,
+        "indian": 0.6087934767094398
+      }
+    },
+    "Reader A only + controller": {
+      "wrong_mean": 0.04514887393783336,
+      "wrong_sd": 0.012155559308131279,
+      "auto_mean": 0.4776677668095812,
+      "review_mean": 0.007584929106523641,
+      "group_wrong": {
+        "clear": 0.04161288986126124,
+        "foggy": 0.04528798395596853,
+        "indian": 0.04653274706495514
+      },
+      "group_auto": {
+        "clear": 0.43542245114411493,
+        "foggy": 0.4845045692311134,
+        "indian": 0.49226084058644476
+      }
+    },
+    "Glimmer only + controller": {
+      "wrong_mean": 0.04167001795572951,
+      "wrong_sd": 0.010892856982120128,
+      "auto_mean": 0.8458017078023398,
+      "review_mean": 0.0021353665550641354,
+      "group_wrong": {
+        "clear": 0.035223929430079334,
+        "foggy": 0.039613824921575475,
+        "indian": 0.044981605543366505
+      },
+      "group_auto": {
+        "clear": 0.8929139950330783,
+        "foggy": 0.8350943028896194,
+        "indian": 0.8314901386071293
+      }
+    },
+    "TULA (both readers + controller)": {
+      "wrong_mean": 0.04263143521627513,
+      "wrong_sd": 0.011326799355419142,
+      "auto_mean": 0.8582467414887155,
+      "review_mean": 0.0062239115269563435,
+      "group_wrong": {
+        "clear": 0.036145253099703296,
+        "foggy": 0.039518886596732625,
+        "indian": 0.04638156183053059
+      },
+      "group_auto": {
+        "clear": 0.893850462789298,
+        "foggy": 0.827923920496372,
+        "indian": 0.8560944458876277
+      }
+    },
+    "TULA, 90% confidence mode": {
+      "wrong_mean": 0.02502054792955472,
+      "wrong_sd": 0.008297359563510695,
+      "auto_mean": 0.7926634391790545,
+      "review_mean": 0.008019481797934182,
+      "group_wrong": {
+        "clear": 0.014738911823188124,
+        "foggy": 0.018916794443950256,
+        "indian": 0.031420247014791854
+      },
+      "group_auto": {
+        "clear": 0.8545760057271555,
+        "foggy": 0.738937642803534,
+        "indian": 0.7893432914436033
+      }
+    }
+  },
+  "budget": [
+    {
+      "alpha": 0.01,
+      "wrong": 0.005301113478299184,
+      "auto": 0.3023622060258188,
+      "human": 0.6976377939741811,
+      "group_auto": {
+        "foggy": 0.13604615023219674,
+        "clear": 0.2104366272567698,
+        "indian": 0.4068000463077932
+      }
+    },
+    {
+      "alpha": 0.02,
+      "wrong": 0.012814070770270036,
+      "auto": 0.6326927075931527,
+      "human": 0.36730729240684734,
+      "group_auto": {
+        "foggy": 0.5880832364487346,
+        "clear": 0.82019726426834,
+        "indian": 0.576136679088691
+      }
+    },
+    {
+      "alpha": 0.03,
+      "wrong": 0.023107246794149546,
+      "auto": 0.782036808670575,
+      "human": 0.217963191329425,
+      "group_auto": {
+        "foggy": 0.7602917716610678,
+        "clear": 0.8624118673565105,
+        "indian": 0.7589765798507203
+      }
+    },
+    {
+      "alpha": 0.05,
+      "wrong": 0.04400959867957369,
+      "auto": 0.8570271721964827,
+      "human": 0.14297282780351728,
+      "group_auto": {
+        "foggy": 0.8363329150194678,
+        "clear": 0.8899351259416884,
+        "indian": 0.8520874708479527
+      }
+    },
+    {
+      "alpha": 0.075,
+      "wrong": 0.06955133352918226,
+      "auto": 0.9041973095091831,
+      "human": 0.09580269049081691,
+      "group_auto": {
+        "foggy": 0.8811976347512693,
+        "clear": 0.9178655877315867,
+        "indian": 0.9077173547155282
+      }
+    },
+    {
+      "alpha": 0.1,
+      "wrong": 0.09574562597114497,
+      "auto": 0.9383699994662288,
+      "human": 0.06163000053377121,
+      "group_auto": {
+        "foggy": 0.9114740556394858,
+        "clear": 0.9478444591663563,
+        "indian": 0.9453047344150048
+      }
+    }
+  ],
+  "attacks": [
+    {
+      "eps": 0.0,
+      "kind": [
+        "cloned_plate",
+        "tag_swap"
+      ],
+      "bound": 0.05,
+      "tula_wrong": 0.047866556176467026,
+      "tula_auto": 0.8641557249291281,
+      "naive_wrong": 0.17025530959652244
+    },
+    {
+      "eps": 0.05,
+      "kind": [
+        "cloned_plate",
+        "tag_swap"
+      ],
+      "bound": 0.1,
+      "tula_wrong": 0.06587109772897645,
+      "tula_auto": 0.8427255573122241,
+      "naive_wrong": 0.20981153087644705
+    },
+    {
+      "eps": 0.1,
+      "kind": [
+        "cloned_plate",
+        "tag_swap"
+      ],
+      "bound": 0.15000000000000002,
+      "tula_wrong": 0.08100942874869957,
+      "tula_auto": 0.8168815141327886,
+      "naive_wrong": 0.2517735412770058
+    },
+    {
+      "eps": 0.2,
+      "kind": [
+        "cloned_plate",
+        "tag_swap"
+      ],
+      "bound": 0.25,
+      "tula_wrong": 0.11462981934058522,
+      "tula_auto": 0.7647146982690682,
+      "naive_wrong": 0.33880429177217675
+    },
+    {
+      "eps": 0.3,
+      "kind": [
+        "cloned_plate",
+        "tag_swap"
+      ],
+      "bound": 0.35,
+      "tula_wrong": 0.14634022068054964,
+      "tula_auto": 0.717447105321219,
+      "naive_wrong": 0.41983544679353174
+    }
+  ],
+  "lookalike": [
+    {
+      "eps": 0.05,
+      "kind": [
+        "lookalike_clone"
+      ],
+      "bound": 0.1,
+      "tula_wrong": 0.06786017847872285,
+      "tula_auto": 0.8434838228766462,
+      "naive_wrong": 0.21043672688153886
+    },
+    {
+      "eps": 0.1,
+      "kind": [
+        "lookalike_clone"
+      ],
+      "bound": 0.15000000000000002,
+      "tula_wrong": 0.08243465893480113,
+      "tula_auto": 0.8205414846072873,
+      "naive_wrong": 0.2493691045379914
+    }
+  ]
+}

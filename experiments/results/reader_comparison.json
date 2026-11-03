@@ -1,0 +1,56 @@
+{
+  "Reader A on SAM 3.1 crop | clear": {
+    "n": 232,
+    "exact_pct": 70.7,
+    "cer_pct": 6.8,
+    "abstain_pct": 0.0,
+    "sure_n": 152,
+    "sure_wrong": 17,
+    "sure_wrong_pct": 11.2
+  },
+  "Reader B (Muse Glimmer) | clear": {
+    "n": 232,
+    "exact_pct": 90.9,
+    "cer_pct": 1.8,
+    "abstain_pct": 0.0,
+    "sure_n": 226,
+    "sure_wrong": 21,
+    "sure_wrong_pct": 9.3
+  },
+  "Reader A on SAM 3.1 crop | foggy": {
+    "n": 232,
+    "exact_pct": 14.7,
+    "cer_pct": 23.9,
+    "abstain_pct": 0.4,
+    "sure_n": 36,
+    "sure_wrong": 17,
+    "sure_wrong_pct": 47.2
+  },
+  "Reader B (Muse Glimmer) | foggy": {
+    "n": 232,
+    "exact_pct": 37.1,
+    "cer_pct": 55.9,
+    "abstain_pct": 54.7,
+    "sure_n": 2,
+    "sure_wrong": 0,
+    "sure_wrong_pct": 0.0
+  },
+  "Reader A (open OCR) | indian": {
+    "n": 586,
+    "exact_pct": 32.4,
+    "cer_pct": 22.3,
+    "abstain_pct": 0.0,
+    "sure_n": 101,
+    "sure_wrong": 20,
+    "sure_wrong_pct": 19.8
+  },
+  "Reader B (Muse Glimmer) | indian": {
+    "n": 600,
+    "exact_pct": 68.0,
+    "cer_pct": 19.5,
+    "abstain_pct": 16.3,
+    "sure_n": 332,
+    "sure_wrong": 37,
+    "sure_wrong_pct": 11.1
+  }
+}
