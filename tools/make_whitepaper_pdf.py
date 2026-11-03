@@ -9,7 +9,9 @@ from pathlib import Path
 import markdown
 
 ROOT = Path(__file__).resolve().parents[1]
-CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+CHROME = next((c for c in ("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+                            "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser")
+               if Path(c).exists()), "google-chrome")
 CSS = """@page{size:A4;margin:18mm 16mm}
 body{font:10.3pt/1.5 Inter,-apple-system,"Segoe UI",sans-serif;color:#1b1726}
 h1{font-size:21pt;font-weight:600;letter-spacing:-.02em;margin:0 0 4pt}
