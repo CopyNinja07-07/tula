@@ -161,7 +161,7 @@ tests/           offline tests
 | [zenitsu09/indian-number-plate](https://huggingface.co/datasets/zenitsu09/indian-number-plate) | Indian plates with text | Not stated by the uploader |
 | [sonnetechnology/license-plate-text-recognition-full](https://huggingface.co/datasets/sonnetechnology/license-plate-text-recognition-full) | Vietnamese plates, second country for the OCR check | CC BY 4.0 |
 
-Full photo sets are not redistributed; download them into `data/raw/`. The toll-desk demo carries small thumbnails of 29 photos, with credit.
+Full photo sets are not redistributed; download them into `data/raw/`. The toll-desk demo shows small thumbnails of 19 CC BY photos, with credit; Indian-set passages are shown without their photos.
 
 ### Prior work
 

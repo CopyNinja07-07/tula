@@ -2,42 +2,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TULA Toll Desk</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;800&family=Overpass+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: a toll-booth operator's desk. Passage queue on the left, the camera frame and the evidence slip on the right. */
+@font-face { font-family: "Bricolage Grotesque"; src: url(../assets/fonts/bricolage-grotesque.woff2) format("woff2"); font-weight: 200 800; font-display: swap; }
+@font-face { font-family: "Geist"; src: url(../assets/fonts/geist.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "Geist Mono"; src: url(../assets/fonts/geist-mono.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+/* Layout: a toll operator's desk. Passage queue on the left, the camera frame and the evidence slip on the right. */
 :root {
-  --bg: #f3f5f2;          /* concrete */
-  --panel: #ffffff;
-  --ink: #17201b;
-  --muted: #5d6b63;
-  --line: #d6ddd8;
-  --sign: #0b5d3b;        /* highway sign green */
-  --sign-ink: #ffffff;
-  --charge: #1f7a45;
-  --hold: #b7791f;
-  --review: #b42318;
-  --plate: #fbfbf7;
-  --plate-ink: #111;
-  --ind: #1d4fa3;
-  --display: "Overpass", "Highway Gothic", "Arial Narrow", system-ui, sans-serif;
-  --body: "Overpass", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: "Overpass Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --bg: #06100c; --panel: #0f1d17; --ink: #ecf6f0; --muted: #93a99d; --line: #1d3329;
+  --sign: linear-gradient(115deg, #10b981, #6ee7b7 48%, #bef264); --sign-ink: #04140d;
+  --charge: #34d399; --hold: #fbbf24; --review: #fb7185;
+  --plate: #fbfbf7; --plate-ink: #111; --ind: #1d4fa3; --accent: #6ee7b7;
+  --display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --body: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: dark;
 }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #101613; --panel: #18201c; --ink: #e8eee9; --muted: #9aa9a0; --line: #2b3832;
-  --sign: #14804f; --charge: #3fb36f; --hold: #e0a43a; --review: #f0645a;
-  --plate: #ecece4; --plate-ink: #111; --ind: #3a6fd0; color-scheme: dark } }
-:root[data-theme="dark"] {
-  --bg: #101613; --panel: #18201c; --ink: #e8eee9; --muted: #9aa9a0; --line: #2b3832;
-  --sign: #14804f; --charge: #3fb36f; --hold: #e0a43a; --review: #f0645a;
-  --plate: #ecece4; --plate-ink: #111; --ind: #3a6fd0; color-scheme: dark }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
+  --bg: #f4f8f5; --panel: #ffffff; --ink: #0a1711; --muted: #4b5f54; --line: #d5e3da;
+  --sign: linear-gradient(115deg, #047857, #10b981 48%, #65a30d); --sign-ink: #ffffff;
+  --charge: #059669; --hold: #b45309; --review: #be123c; --accent: #047857; color-scheme: light } }
+:root[data-theme="light"] {
+  --bg: #f4f8f5; --panel: #ffffff; --ink: #0a1711; --muted: #4b5f54; --line: #d5e3da;
+  --sign: linear-gradient(115deg, #047857, #10b981 48%, #65a30d); --sign-ink: #ffffff;
+  --charge: #059669; --hold: #b45309; --review: #be123c; --accent: #047857; color-scheme: light }
 body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5; }
 .wrap { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 40px; display: grid; gap: 20px; }
-header.sign { background: var(--sign); color: var(--sign-ink); border-radius: 10px; padding: 18px 22px; display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: baseline; justify-content: space-between; border: 3px solid var(--sign-ink); outline: 3px solid var(--sign); }
+header.sign { background: var(--sign); color: var(--sign-ink); border-radius: 16px; padding: 18px 22px; display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: baseline; justify-content: space-between; }
 header.sign h1 { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(28px, 4vw, 40px); letter-spacing: 0.04em; }
 header.sign p { margin: 0; font-size: 16px; max-width: 60ch; text-wrap: balance; }
-.promise { font-family: var(--mono); font-size: 13px; background: rgba(255,255,255,0.14); padding: 4px 10px; border-radius: 6px; white-space: nowrap; }
+.promise { font-family: var(--mono); font-size: 13px; background: rgba(0,0,0,0.12); padding: 4px 10px; border-radius: 6px; white-space: nowrap; }
 .desk { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 20px; align-items: start; }
 @media (max-width: 860px) { .desk { grid-template-columns: minmax(0, 1fr); } }
 .queue { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: grid; gap: 10px; }
@@ -47,7 +40,7 @@ header.sign p { margin: 0; font-size: 16px; max-width: 60ch; text-wrap: balance;
 @media (max-width: 860px) { .list { max-height: 260px; } }
 .item { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; text-align: left; font: inherit; color: inherit; background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; cursor: pointer; }
 .item:hover { border-color: var(--muted); }
-.item[aria-current="true"] { border-color: var(--sign); box-shadow: inset 3px 0 0 var(--sign); }
+.item[aria-current="true"] { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
 .item .plate-sm { font-family: var(--mono); font-weight: 600; letter-spacing: 0.04em; }
 .item .meta { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
 .chip { font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; color: #fff; align-self: center; }
@@ -57,6 +50,7 @@ header.sign p { margin: 0; font-size: 16px; max-width: 60ch; text-wrap: balance;
 @media (max-width: 1060px) { .row { grid-template-columns: minmax(0, 1fr); } }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; min-width: 0; }
 .label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin: 0 0 8px; }
+.nophoto { aspect-ratio: 16/9; display: grid; place-items: center; text-align: center; padding: 20px; border-radius: 6px; border: 1px dashed var(--line); color: var(--muted); font-size: 14px; }
 .frame img { width: 100%; border-radius: 6px; display: block; background: #000; }
 .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--muted); margin-top: 8px; }
 .legend i { display: inline-block; width: 12px; height: 12px; border: 2px solid; border-radius: 2px; vertical-align: -2px; margin-right: 4px; }
@@ -93,7 +87,7 @@ table.ledger td:last-child { text-align: right; font-family: var(--mono); }
 .results th:first-child, .results td:first-child { text-align: left; }
 .results tr.tula td { font-weight: 600; }
 footer { font-size: 12px; color: var(--muted); max-width: 90ch; }
-button:focus-visible, select:focus-visible { outline: 2px solid var(--sign); outline-offset: 2px; }
+button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 </style>
 
 <div class="wrap">
@@ -119,7 +113,7 @@ button:focus-visible, select:focus-visible { outline: 2px solid var(--sign); out
   <section class="card results" id="results" hidden></section>
 
   <footer>
-    Photos: Foggy-Hazy License Plates (Mendeley, CC BY 4.0, plate text hand-labelled for TULA) and zenitsu09/indian-number-plate.
+    Photos: Foggy-Hazy License Plates (Mendeley, CC BY 4.0, plate text hand-labelled for TULA). Indian-set passages (zenitsu09/indian-number-plate) are shown without their photos.
     Boxes: Meta SAM 3.1. Reader A: open-source fast-plate-ocr. Reader B: Meta Muse Glimmer 30B.
     The FASTag, registry and scenario on each passage are simulated; no real account or owner is shown.
   </footer>
@@ -167,7 +161,7 @@ button:focus-visible, select:focus-visible { outline: 2px solid var(--sign); out
     $("#stage").innerHTML = `
       <div class="row">
         <div class="card frame"><p class="label">Camera frame · ${SETS[c.set]}</p>
-          <img src="${c.img}" alt="Toll camera photo with the plate and vehicle boxes drawn by SAM 3.1">
+          ${c.img ? `<img src="${c.img}" alt="Toll camera photo with the plate and vehicle boxes drawn by SAM 3.1">` : `<div class="nophoto">Photo not shown: this dataset's uploader states no licence, so TULA does not redistribute its images. The reads below are real.</div>`}
           <div class="legend"><span><i style="border-color:#28dc78"></i>Plate (SAM 3.1${c.sam_plate ? ", " + Math.round(c.sam_plate * 100) + "% sure" : ""})</span><span><i style="border-color:#fac828"></i>Vehicle (SAM 3.1)</span><span>Hand label: <b style="font-family:var(--mono)">${esc(c.truth)}</b></span></div>
         </div>
         <div class="card readers"><p class="label">Two independent readers</p>

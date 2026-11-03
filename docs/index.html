@@ -5,102 +5,161 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>TULA · weigh the evidence</title>
 <meta name="description" content="TULA is a safety layer for automatic toll billing. Meta SAM 3.1 and Muse Glimmer read the plate; conformal risk control keeps wrong charges under a stated promise in every group of traffic.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;800;900&family=Overpass+Mono:wght@400;600&family=Noto+Serif+Devanagari:wght@600&display=swap">
+<meta name="theme-color" content="#06100c">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%2310b981'/%3E%3Cstop offset='1' stop-color='%23bef264'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='%2306100c'/%3E%3Cpath d='M12 24h40M32 14v38M20 24l-8 14h16zM44 24l-8 14h16z' stroke='url(%23g)' stroke-width='4' fill='none' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+@font-face { font-family: "Bricolage Grotesque"; src: url(assets/fonts/bricolage-grotesque.woff2) format("woff2"); font-weight: 200 800; font-display: swap; }
+@font-face { font-family: "Geist"; src: url(assets/fonts/geist.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "Geist Mono"; src: url(assets/fonts/geist-mono.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "Tula Deva"; src: url(assets/fonts/tula-devanagari.woff2) format("woff2"); font-weight: 600; font-display: swap; }
+
+/* Dark first: a night highway, lit by an emerald-to-lime gradient. */
 :root {
-  --bg: #f6f4ee; --panel: #ffffff; --ink: #17201b; --muted: #5a675f; --line: #d9ddd6;
-  --sign: #0b5d3b; --sign-ink: #ffffff; --brass: #a8781f;
-  --charge: #1f7a45; --hold: #b7791f; --review: #b42318;
-  --display: "Overpass", "Arial Narrow", system-ui, sans-serif;
-  --body: "Overpass", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: "Overpass Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  --deva: "Noto Serif Devanagari", serif;
-  color-scheme: light;
+  --bg: #06100c; --bg2: #0a1712; --panel: rgba(16, 30, 24, 0.72); --panel-solid: #0f1d17;
+  --ink: #ecf6f0; --muted: #93a99d; --line: rgba(148, 196, 170, 0.16);
+  --g1: #10b981; --g2: #6ee7b7; --g3: #bef264;
+  --grad: linear-gradient(115deg, var(--g1) 0%, var(--g2) 48%, var(--g3) 100%);
+  --charge: #34d399; --hold: #fbbf24; --review: #fb7185; --sign-ink: #04140d;
+  --display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --body: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --deva: "Tula Deva", "Noto Serif Devanagari", serif;
+  color-scheme: dark;
 }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #0f1512; --panel: #161e1a; --ink: #e8eee9; --muted: #9aa9a0; --line: #2a3530;
-  --sign: #1f9e66; --brass: #e0b04a; --charge: #3fb36f; --hold: #e0a43a; --review: #f0645a; color-scheme: dark } }
-:root[data-theme="dark"] {
-  --bg: #0f1512; --panel: #161e1a; --ink: #e8eee9; --muted: #9aa9a0; --line: #2a3530;
-  --sign: #1f9e66; --brass: #e0b04a; --charge: #3fb36f; --hold: #e0a43a; --review: #f0645a; color-scheme: dark }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) {
+  --bg: #f4f8f5; --bg2: #e9f2ec; --panel: rgba(255, 255, 255, 0.82); --panel-solid: #ffffff;
+  --ink: #0a1711; --muted: #4b5f54; --line: rgba(20, 70, 45, 0.14);
+  --g1: #047857; --g2: #10b981; --g3: #65a30d;
+  --charge: #059669; --hold: #b45309; --review: #be123c; --sign-ink: #ffffff; color-scheme: light } }
+:root[data-theme="light"] {
+  --bg: #f4f8f5; --bg2: #e9f2ec; --panel: rgba(255, 255, 255, 0.82); --panel-solid: #ffffff;
+  --ink: #0a1711; --muted: #4b5f54; --line: rgba(20, 70, 45, 0.14);
+  --g1: #047857; --g2: #10b981; --g3: #65a30d;
+  --charge: #059669; --hold: #b45309; --review: #be123c; --sign-ink: #ffffff; color-scheme: light }
+
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 var(--body); }
-a { color: var(--sign); }
-.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.65 var(--body); -webkit-font-smoothing: antialiased; }
+body::before { /* slow drifting aurora behind everything */
+  content: ""; position: fixed; inset: -20vh -20vw; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(40vw 30vh at 18% 12%, color-mix(in srgb, var(--g1) 22%, transparent), transparent 70%),
+    radial-gradient(36vw 28vh at 85% 8%, color-mix(in srgb, var(--g3) 14%, transparent), transparent 70%),
+    radial-gradient(50vw 40vh at 60% 95%, color-mix(in srgb, var(--g2) 10%, transparent), transparent 70%);
+  animation: drift 26s ease-in-out infinite alternate; }
+@keyframes drift { to { transform: translate3d(3vw, 4vh, 0) rotate(4deg); } }
+a { color: var(--g2); text-underline-offset: 3px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); }
 img { max-width: 100%; height: auto; display: block; }
+.grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; background-size: 200% 100%; animation: sheen 9s ease-in-out infinite alternate; }
+@keyframes sheen { to { background-position: 100% 0; } }
 
-/* the road sign header */
-.sign { background: var(--sign); color: var(--sign-ink); }
-.sign .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; padding-block: 14px; }
-.sign b { font: 900 22px/1 var(--display); letter-spacing: 0.18em; }
-.sign nav { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; }
-.sign nav a { color: var(--sign-ink); text-decoration: none; opacity: 0.9; }
-.sign nav a:hover { opacity: 1; text-decoration: underline; }
+/* top bar */
+.bar { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%);
+       background: color-mix(in srgb, var(--bg) 70%, transparent); border-bottom: 1px solid var(--line); }
+.bar .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 22px; padding-block: 12px; }
+.logo { display: flex; align-items: center; gap: 10px; font: 800 19px/1 var(--display); letter-spacing: 0.16em; color: var(--ink); text-decoration: none; }
+.logo svg { width: 26px; height: 26px; }
+.bar nav { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 14px; }
+.bar nav a { color: var(--muted); text-decoration: none; transition: color .2s; }
+.bar nav a:hover { color: var(--ink); }
 
-header.hero { padding-block: 44px 20px; display: grid; gap: 22px; }
-.kicker { font: 600 12px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--brass); }
-h1 { font: 900 clamp(34px, 6vw, 62px)/1.02 var(--display); margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
-h1 .deva { font-family: var(--deva); font-weight: 600; color: var(--brass); }
-.lede { font-size: clamp(17px, 2.1vw, 20px); max-width: 62ch; margin: 0; color: var(--muted); text-wrap: pretty; }
-.lede strong { color: var(--ink); }
+header.hero { padding-block: 64px 28px; display: grid; gap: 22px; }
+.kicker { display: inline-flex; align-items: center; gap: 8px; font: 500 12px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+          border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; justify-self: start; background: var(--panel); }
+.kicker i { width: 7px; height: 7px; border-radius: 50%; background: var(--g2); box-shadow: 0 0 0 0 var(--g2); animation: ping 2.2s infinite; }
+@keyframes ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--g2) 70%, transparent); } 100% { box-shadow: 0 0 0 10px transparent; } }
+h1 { font: 800 clamp(38px, 6.6vw, 76px)/0.98 var(--display); margin: 0; text-wrap: balance; letter-spacing: -0.025em; }
+h1 .deva { font-family: var(--deva); font-weight: 600; letter-spacing: 0; }
+.lede { font-size: clamp(17px, 2vw, 20px); max-width: 64ch; margin: 0; color: var(--muted); text-wrap: pretty; }
+.lede strong { color: var(--ink); font-weight: 600; }
 .cta { display: flex; flex-wrap: wrap; gap: 10px; }
-.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 15px; }
-.btn.primary { background: var(--sign); color: var(--sign-ink); border-color: var(--sign); }
-.art { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel);
+       color: var(--ink); text-decoration: none; font-weight: 600; font-size: 15px; transition: transform .2s, border-color .2s; }
+.btn:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--g2) 50%, transparent); }
+.btn.primary { background: var(--grad); background-size: 160% 100%; color: var(--sign-ink); border: 0; animation: sheen 6s ease-in-out infinite alternate; }
+.art img { width: 100%; }
+.art { border-radius: 18px; overflow: hidden; border: 1px solid var(--line); background: var(--bg2);
+       box-shadow: 0 30px 80px -40px color-mix(in srgb, var(--g1) 45%, transparent); }
 
-section { padding-block: 36px; border-top: 1px solid var(--line); }
-h2 { font: 800 clamp(24px, 3.4vw, 34px)/1.15 var(--display); margin: 0 0 6px; text-wrap: balance; }
-.sub { color: var(--muted); margin: 0 0 18px; max-width: 70ch; }
-.num-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
-.num { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
-.num b { display: block; font: 800 30px/1.1 var(--display); }
+section { padding-block: 44px; }
+section + section { border-top: 1px solid var(--line); }
+h2 { font: 800 clamp(26px, 3.6vw, 40px)/1.08 var(--display); margin: 0 0 8px; text-wrap: balance; letter-spacing: -0.02em; }
+.sub { color: var(--muted); margin: 0 0 20px; max-width: 70ch; }
+.num-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.num { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; position: relative; overflow: hidden; }
+.num::after { content: ""; position: absolute; inset: auto 0 0 0; height: 2px; background: var(--grad); opacity: .7; }
+.num b { display: block; font: 800 38px/1.05 var(--display); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .num span { font-size: 14px; color: var(--muted); }
+.over { color: var(--review); }
 
 /* lab */
-.lab { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 18px; }
+.lab { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 20px; display: grid; gap: 18px; backdrop-filter: blur(8px); }
 .lab > *, .hero > *, section > * { min-width: 0; }
 .controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px 22px; align-items: end; }
-.ctl label { display: block; font: 600 12px/1.3 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-.ctl output { font: 800 26px/1 var(--display); display: block; margin-bottom: 4px; }
-input[type=range] { width: 100%; accent-color: var(--sign); }
-.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-.seg button { font: inherit; font-size: 14px; padding: 7px 12px; border: 0; background: transparent; color: var(--ink); cursor: pointer; }
-.seg button[aria-pressed="true"] { background: var(--sign); color: var(--sign-ink); }
-select { font: inherit; font-size: 14px; padding: 7px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); }
+.ctl label { display: block; font: 500 11.5px/1.3 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.ctl output { font: 800 30px/1 var(--display); display: block; margin-bottom: 6px; font-variant-numeric: tabular-nums; }
+input[type=range] { width: 100%; accent-color: var(--g2); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.seg button { font: inherit; font-size: 14px; padding: 8px 13px; border: 0; background: transparent; color: var(--ink); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--grad); color: var(--sign-ink); font-weight: 600; }
+select { font: inherit; font-size: 14px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-solid); color: var(--ink); }
 .groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 14px; }
-.g { border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 10px; min-width: 0; }
-.g h3 { margin: 0; font: 800 18px/1.2 var(--display); display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
-.badge { font: 600 11px/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 7px; border-radius: 4px; color: #fff; white-space: nowrap; }
-.badge.ok { background: var(--charge); } .badge.no { background: var(--review); }
+.g { border: 1px solid var(--line); border-radius: 14px; padding: 15px; display: grid; gap: 10px; min-width: 0; background: color-mix(in srgb, var(--bg) 40%, transparent); }
+.g h3 { margin: 0; font: 700 18px/1.2 var(--display); display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.badge { font: 600 10.5px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 8px; border-radius: 999px; white-space: nowrap; }
+.badge.ok { background: color-mix(in srgb, var(--charge) 18%, transparent); color: var(--charge); border: 1px solid color-mix(in srgb, var(--charge) 40%, transparent); }
+.badge.no { background: color-mix(in srgb, var(--review) 18%, transparent); color: var(--review); border: 1px solid color-mix(in srgb, var(--review) 40%, transparent); }
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; font-size: 14px; font-variant-numeric: tabular-nums; }
 .stats div span { display: block; color: var(--muted); font-size: 12px; }
-.stats div b { font: 800 20px/1.2 var(--display); }
-.over { color: var(--review); }
-canvas { width: 100%; height: 120px; display: block; border-radius: 6px; background: color-mix(in srgb, var(--bg) 60%, transparent); }
+.stats div b { font: 700 21px/1.2 var(--display); }
+canvas { width: 100%; height: 124px; display: block; border-radius: 10px; background: color-mix(in srgb, var(--bg) 70%, transparent); border: 1px solid var(--line); }
 .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted); }
-.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: 0; }
-.formula { font: 14px/1.7 var(--mono); background: color-mix(in srgb, var(--brass) 10%, var(--panel)); border-left: 3px solid var(--brass); padding: 10px 14px; border-radius: 6px; overflow-x: auto; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; }
+.formula { font: 14px/1.7 var(--mono); background: color-mix(in srgb, var(--g1) 9%, transparent); border: 1px solid color-mix(in srgb, var(--g2) 25%, transparent);
+           border-left: 3px solid var(--g2); padding: 10px 14px; border-radius: 10px; overflow-x: auto; }
+.note { margin: 0; font-size: 14px; color: var(--muted); max-width: 80ch; }
 .versus { display: grid; gap: 10px; }
-.vrow { display: grid; grid-template-columns: minmax(70px, 120px) minmax(0, 1fr) 54px; gap: 10px; align-items: center; font-size: 14px; font-variant-numeric: tabular-nums; }
-.track { position: relative; height: 16px; background: color-mix(in srgb, var(--line) 60%, transparent); border-radius: 4px; overflow: hidden; }
-.track i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; transition: width .35s cubic-bezier(.2,.8,.2,1); }
-.track .promise { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--review); transition: left .35s; }
-.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+.vrow { display: grid; grid-template-columns: minmax(70px, 130px) minmax(0, 1fr) 56px; gap: 10px; align-items: center; font-size: 14px; font-variant-numeric: tabular-nums; }
+.track { position: relative; height: 16px; background: color-mix(in srgb, var(--line) 80%, transparent); border-radius: 6px; overflow: hidden; }
+.track i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; transition: width .4s cubic-bezier(.2,.8,.2,1); }
+.track .promise { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--review); transition: left .35s; box-shadow: 0 0 10px var(--review); }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
 @media (max-width: 760px) { .two { grid-template-columns: minmax(0, 1fr); } }
-.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
-.card h3 { margin: 0 0 8px; font: 800 18px/1.2 var(--display); }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 18px; min-width: 0; }
+.card h3 { margin: 0 0 8px; font: 700 20px/1.2 var(--display); }
 .card p { margin: 0; color: var(--muted); font-size: 15px; }
-ul.plain { margin: 0; padding-left: 18px; color: var(--muted); }
-footer { padding-block: 30px 50px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); }
-:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) { .track i, .track .promise { transition: none; } }
+.card .tag { font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--g2); display: block; margin-bottom: 8px; }
+ul.plain { margin: 0; padding-left: 18px; color: var(--muted); display: grid; gap: 6px; }
+footer { padding-block: 34px 56px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); }
+
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.step { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+.step b { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--grad); color: var(--sign-ink); font: 800 14px/1 var(--display); }
+.step h3 { font: 700 17px/1.25 var(--display); margin: 10px 0 4px; }
+.step p { margin: 0; font-size: 14.5px; color: var(--muted); }
+.mono { font-family: var(--mono); }
+.try { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+.try button { font: inherit; font-size: 13.5px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; transition: border-color .2s, background .2s; }
+.try button:hover { border-color: var(--g2); background: color-mix(in srgb, var(--g2) 10%, transparent); }
+.summary { margin: 0; font-size: 16.5px; line-height: 1.55; padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--g1) 10%, transparent); border: 1px solid color-mix(in srgb, var(--g2) 22%, transparent); }
+.summary b { color: var(--g2); }
+.plain-line { margin: 0; font-size: 14px; color: var(--muted); }
+/* reveal on scroll */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.8,.2,1); }
+.reveal.in { opacity: 1; transform: none; }
+:focus-visible { outline: 2px solid var(--g2); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  body::before, .grad, .btn.primary, .kicker i { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .track i, .track .promise { transition: none; } }
 </style>
 </head>
 <body>
-<div class="sign"><div class="wrap">
-  <b>TULA</b>
+<div class="bar"><div class="wrap">
+  <a class="logo" href="#top" aria-label="TULA home"><svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#10b981"/><stop offset="1" stop-color="#bef264"/></linearGradient></defs><path d="M12 24h40M32 14v38M20 24l-8 14h16zM44 24l-8 14h16zM22 52h20" stroke="url(#lg)" stroke-width="4.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/></svg>TULA</a>
   <nav aria-label="Sections">
     <a href="#lab">Live lab</a><a href="#results">Results</a><a href="demo/">Toll desk</a>
     <a href="https://github.com/CopyNinja07-07/tula/blob/main/docs/WHITEPAPER.md">Whitepaper</a>
@@ -108,40 +167,51 @@ footer { padding-block: 30px 50px; color: var(--muted); font-size: 14px; border-
   </nav>
 </div></div>
 
-<div class="wrap">
+<div class="wrap" id="top">
   <header class="hero">
-    <span class="kicker">Meta Global AI Developer Hackathon 2026 · Indie track</span>
-    <h1>Before an AI fines someone, it should weigh the evidence. <span class="deva">तुला</span></h1>
-    <p class="lede">India's new barrier-free tolls bill a car from a photo, with no barrier and no person checking. <strong>TULA</strong> sits between the camera and the bill. Meta <strong>SAM 3.1</strong> finds the plate, two readers that never see each other's answer read it (one of them Meta <strong>Muse Glimmer 30B</strong>), and a conformal risk controller decides <strong>charge</strong>, <strong>hold</strong> or <strong>send to a human</strong>, so that wrong charges stay under a promise you can state, in fog and in clear light alike.</p>
+    <span class="kicker"><i></i>Meta Global AI Developer Hackathon 2026 · Indie track</span>
+    <h1>Before an AI fines someone, it should <span class="grad">weigh the evidence.</span> <span class="deva grad">तुला</span></h1>
+    <p class="lede">India's new barrier-free tolls bill a car from a photo, with no barrier and no person checking. <strong>TULA</strong> sits between the camera and the bill. Meta <strong>SAM 3.1</strong> finds the plate, two readers that never see each other's answer read it (one of them Meta <strong>Muse Glimmer 30B</strong>), and a conformal risk controller decides <strong>charge</strong>, <strong>hold</strong> or <strong>send to a human</strong>, so wrong charges stay under a promise you can state, in fog and in clear light alike.</p>
     <div class="cta">
-      <a class="btn primary" href="#lab">Try the live lab</a>
+      <a class="btn primary" href="#lab">Try the live lab →</a>
       <a class="btn" href="demo/">Open the toll desk</a>
       <a class="btn" href="https://github.com/CopyNinja07-07/tula">Read the code</a>
     </div>
     <div class="art"><img src="assets/scale.svg" alt="Animated balance scale: agreeing plate reads tip it to charge, a contradicting FASTag tips it to review, fog leaves it level and the passage is held" width="900" height="360"></div>
   </header>
 
-  <section aria-labelledby="h-numbers">
-    <h2 id="h-numbers">On 1,050 real plate photos</h2>
+  <section class="reveal" aria-labelledby="h-numbers">
+    <h2 id="h-numbers">On <span class="grad">1,050 real plate photos</span></h2>
     <p class="sub">Photos and both readers' answers are real. FASTags and the registry are simulated, because no public data links them. Mean of 200 random splits, promise 5% per group.</p>
     <div class="num-row">
-      <div class="num"><b>17.0%</b><span>wrong charges from today's tag-first biller</span></div>
-      <div class="num"><b class="over">12.2%</b><span>wrong in clear weather with one "90% sure" threshold</span></div>
-      <div class="num"><b>4.3%</b><span>wrong with TULA, under 5% in every group</span></div>
-      <div class="num"><b>86%</b><span>of traffic TULA still charges automatically</span></div>
+      <div class="num"><b data-count="17.0" data-suffix="%">17.0%</b><span>wrong charges from today's tag-first biller</span></div>
+      <div class="num"><b class="over" data-count="12.2" data-suffix="%">12.2%</b><span>wrong in clear weather with one "90% sure" threshold</span></div>
+      <div class="num"><b class="grad" data-count="4.3" data-suffix="%">4.3%</b><span>wrong with TULA, under 5% in every group</span></div>
+      <div class="num"><b class="grad" data-count="86" data-suffix="%" data-dp="0">86%</b><span>of traffic TULA still charges automatically</span></div>
     </div>
   </section>
 
-  <section aria-labelledby="h-how">
-    <h2 id="h-how">How a passage is weighed</h2>
+  <section class="reveal" aria-labelledby="h-how">
+    <h2 id="h-how">How a passage is <span class="grad">weighed</span></h2>
     <p class="sub">The two readers are kept blind to each other on purpose: agreement only counts as evidence if neither could copy the other.</p>
     <div class="art"><img src="assets/pipeline.svg" alt="Animated pipeline: a car passes the gantry, SAM 3.1 boxes the plate, two readers read it, the evidence check and the controller produce charge, hold or review" width="900" height="312"></div>
   </section>
 
-  <section id="lab" aria-labelledby="h-lab">
-    <h2 id="h-lab">Live lab: set the promise, watch the cut-offs move</h2>
-    <p class="sub">This runs the real controller in your browser on real doubt scores: each group's calibration passages pick its own cut-off, then the held-out test passages show what that cut-off actually does. Nothing here is precomputed for a fixed promise.</p>
+  <section id="lab" class="reveal" aria-labelledby="h-lab">
+    <h2 id="h-lab">Live lab: set the promise, <span class="grad">watch the cut-offs move</span></h2>
+    <p class="sub">You are the toll operator. Choose how many wrong bills you can accept, and TULA works out, for each kind of photo, how sure it must be before it charges anyone. Everything below is computed live in your browser from the real photos' scores.</p>
+    <div class="steps">
+      <div class="step"><b>1</b><h3>Every car gets a doubt score</h3><p>From 0 (both readers agree, the FASTag matches, the car looks right) to 1 (no evidence at all). Each dot in the charts is one car.</p></div>
+      <div class="step"><b>2</b><h3>Checked cars set the line</h3><p>On cars whose right answer we know, TULA finds the highest doubt it can accept and still keep your promise. That line is the cut-off <span class="mono">τ</span>.</p></div>
+      <div class="step"><b>3</b><h3>New cars test it</h3><p>Cars left of the line are charged; the rest wait for the next camera or a person. The numbers show what really happened to cars TULA had never seen.</p></div>
+    </div>
     <div class="lab">
+      <div class="try" role="group" aria-label="Try a setting"><span>Try:</span>
+        <button type="button" data-a="1">Very strict (1%)</button>
+        <button type="button" data-a="5">The 5% promise</button>
+        <button type="button" data-a="12">Relaxed (12%)</button>
+        <button type="button" data-hp="1">Promise per day, not on average</button>
+      </div>
       <div class="controls">
         <div class="ctl"><label for="alpha">Promise: wrong charges at most</label><output id="alpha-out">5.0%</output>
           <input id="alpha" type="range" min="0.5" max="15" step="0.5" value="5" aria-describedby="alpha-help"></div>
@@ -154,41 +224,43 @@ footer { padding-block: 30px 50px; color: var(--muted); font-size: 14px; border-
           <select id="split"><option value="all">All splits, averaged</option></select></div>
       </div>
       <div class="formula" id="alpha-help" aria-label="The rule each group's cut-off follows">τ<sub>g</sub> = the largest score with &nbsp;(wrong charges in group g's calibration set at or below τ<sub>g</sub> + 1) / (n<sub>g</sub> + 1) ≤ α</div>
-      <p class="sub" style="margin:0;font-size:14px">"On average" means over many calibration sets: one split on its own can land a little above the promise, and the average over splits stays under it. "90% confidence" uses a Clopper-Pearson bound instead, so each split stays under the promise with probability at least 90%, at the cost of charging less.</p>
-      <div class="groups" id="groups" aria-live="polite"></div>
+      <p class="note">"On average" means over many calibration sets: one split on its own can land a little above the promise, and the average over splits stays under it. "90% confidence" uses a Clopper-Pearson bound instead, so each split stays under the promise with probability at least 90%, at the cost of charging less.</p>
+      <p class="summary" id="summary" aria-live="polite"></p>
+      <div class="groups" id="groups"></div>
       <div class="legend"><span><i class="dot" style="background:var(--charge)"></i>charging would be right</span><span><i class="dot" style="background:var(--review)"></i>charging would be wrong</span><span>│ cut-off τ: left of it is charged, right of it waits for evidence or a human</span></div>
     </div>
   </section>
 
-  <section aria-labelledby="h-vs">
-    <h2 id="h-vs">Versus one confidence threshold</h2>
+  <section class="reveal" aria-labelledby="h-vs">
+    <h2 id="h-vs">Versus one <span class="grad">confidence threshold</span></h2>
     <p class="sub">A single "charge when the model is this sure" rule cannot keep a promise per group: the same setting that is safe in fog is unsafe in clear light, because Muse Glimmer is careful in fog and over-confident when it can see. Move it and watch.</p>
     <div class="lab">
       <div class="ctl" style="max-width:420px"><label for="thr">Charge when Glimmer is at least this sure</label><output id="thr-out">0.90</output>
         <input id="thr" type="range" min="0.5" max="0.99" step="0.01" value="0.9"></div>
+      <p class="plain-line">Orange is one fixed rule for every photo. Green is TULA at the promise you chose above. The red line is that promise: anything past it means more innocent drivers billed than promised.</p>
       <div class="versus" id="versus"></div>
     </div>
   </section>
 
-  <section id="results" aria-labelledby="h-res">
-    <h2 id="h-res">Results</h2>
+  <section id="results" class="reveal" aria-labelledby="h-res">
+    <h2 id="h-res">The <span class="grad">verdict</span></h2>
     <p class="sub">Per group, against the 5% promise. Full tables in <a href="https://github.com/CopyNinja07-07/tula/tree/main/experiments/results">experiments/results</a>.</p>
     <div class="art"><img src="assets/verdict.svg" alt="Bar chart of wrong charges per group: today's biller 14 to 19 percent, one threshold 12.2 percent in clear and 7.0 percent on the Indian set, TULA 3.6 to 4.6 percent" width="900" height="422"></div>
     <div style="height:16px"></div>
     <div class="art"><img src="assets/redteam.svg" alt="Line chart: as attackers take up to 30 percent of traffic, TULA's wrong charges stay under the bound of promise plus attacker share" width="900" height="380"></div>
   </section>
 
-  <section aria-labelledby="h-meta">
-    <h2 id="h-meta">Built on open Meta models</h2>
+  <section class="reveal" aria-labelledby="h-meta">
+    <h2 id="h-meta">Built on <span class="grad">open Meta models</span></h2>
     <div class="two">
-      <div class="card"><h3>SAM 3.1</h3><p>Text prompts "license plate" and "vehicle", running on a 16 GB MacBook through MLX. Found the plate in 247 of 248 foggy photos; the detector used before found 207.</p></div>
-      <div class="card"><h3>Muse Glimmer 30B</h3><p>Meta's official 4-bit GGUF in llama.cpp on two free Kaggle T4 GPUs. Reads plate, make, colour and type as JSON, and says "cannot read" in fog instead of guessing: 91% exact on clear photos, 37% in fog, against 71% and 15% for the open-source reader.</p></div>
+      <div class="card"><span class="tag">Find · MLX on a MacBook</span><h3>SAM 3.1</h3><p>Text prompts "license plate" and "vehicle", running on a 16 GB MacBook through MLX. Found the plate in 247 of 248 foggy photos; the detector used before found 207.</p></div>
+      <div class="card"><span class="tag">Read · 2× free Kaggle T4</span><h3>Muse Glimmer 30B</h3><p>Meta's official 4-bit GGUF in llama.cpp on two free Kaggle T4 GPUs. Reads plate, make, colour and type as JSON, and says "cannot read" in fog instead of guessing: 91% exact on clear photos, 37% in fog, against 71% and 15% for the open-source reader.</p></div>
     </div>
     <p class="sub" style="margin-top:14px">Open weights mean a toll operator can run all of it at the plaza, without sending photos of people's cars to a cloud API.</p>
   </section>
 
-  <section aria-labelledby="h-limits">
-    <h2 id="h-limits">What this does not show</h2>
+  <section class="reveal" aria-labelledby="h-limits">
+    <h2 id="h-limits">What the scale <span class="grad">cannot see</span></h2>
     <ul class="plain">
       <li>FASTags, registry and attack mix are simulated. The photos and both readers' answers are real.</li>
       <li>The open-source reader is a stand-in. It is not the system any Indian toll operator uses.</li>
@@ -199,9 +271,27 @@ footer { padding-block: 30px 50px; color: var(--muted); font-size: 14px; border-
 </div>
 
 <footer><div class="wrap">
-  Suryansh Pratap Singh · photos: Foggy-Hazy License Plates (Mendeley, CC BY 4.0, hand-labelled for TULA) and zenitsu09/indian-number-plate (Hugging Face) · conformal risk control after Angelopoulos et al., 2022.
+  Suryansh Pratap Singh · photos: Foggy-Hazy License Plates (Mendeley, CC BY 4.0, hand-labelled for TULA) and zenitsu09/indian-number-plate (Hugging Face) · conformal risk control after Angelopoulos et al., 2022 · MIT licence
 </div></footer>
 
+<script>
+// Count-up numbers and reveal-on-scroll. Both stay still if the viewer prefers less motion.
+(() => {
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add("in"); io.unobserve(e.target);
+    e.target.querySelectorAll("[data-count]").forEach((el) => {
+      if (still) return;
+      const end = +el.dataset.count, dp = el.dataset.dp ? +el.dataset.dp : 1, suf = el.dataset.suffix || "", t0 = performance.now();
+      const step = (t) => { const k = Math.min(1, (t - t0) / 1400), v = end * (1 - Math.pow(1 - k, 3));
+        el.textContent = v.toFixed(dp) + suf; if (k < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    });
+  }), { threshold: 0.15 });
+  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+})();
+</script>
 <script src="lab_data.js?v=30"></script>
 <script>
 (() => {
@@ -282,9 +372,12 @@ footer { padding-block: 30px 50px; color: var(--muted); font-size: 14px; border-
           <div><span>calibration passages</span><b>${Math.round(r.ncal)}</b></div>
           <div><span>cut-off τ ${r.tau.length > 1 ? "(mean)" : ""}</span><b>${r.tau.length ? (r.tau.reduce((a, b) => a + b, 0) / r.tau.length).toFixed(3) : "none"}</b></div>
         </div>
+        <p class="plain-line">${r.cert === 0 ? "Too few checked cars to make this promise, so nothing in this group is charged automatically." : `Out of 100 cars like these, about <b>${Math.round(r.auto * 100)}</b> are charged straight away and about <b>${(r.wrong * 100).toFixed(1)}</b> of those 100 are charged wrongly.`}</p>
         <canvas id="cv${i}" role="img" aria-label="Test passages of ${NAMES[r.name]} by doubt score, with the cut-off"></canvas>
       </div>`).join("");
     res.forEach((r, i) => draw(document.getElementById("cv" + i), r.plot.test, r.plot.tau));
+    const kept = res.every((r) => r.wrong <= alpha), auto = res.reduce((a, r) => a + r.auto, 0) / res.length;
+    $("#summary").innerHTML = `With a promise of <b>at most ${(alpha * 100).toFixed(1)}% wrong bills</b>${mode === "hp" ? " (kept with 90% confidence)" : ""}, TULA charges about <b>${Math.round(auto * 100)}%</b> of cars automatically and ${kept ? "keeps the promise in <b>every</b> group" : "goes over in a group on this split (the promise is about the average over splits)"}. The other cars are not let off: they wait for another camera or a person.`;
     versus();
   }
 
@@ -307,6 +400,11 @@ footer { padding-block: 30px 50px; color: var(--muted); font-size: 14px; border-
   document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => {
     mode = b.dataset.mode; document.querySelectorAll(".seg button").forEach((x) => x.setAttribute("aria-pressed", String(x === b))); render(); }));
   $("#alpha").addEventListener("input", render); sel.addEventListener("change", render); $("#thr").addEventListener("input", versus);
+  document.querySelectorAll(".try button").forEach((b) => b.addEventListener("click", () => {
+    if (b.dataset.a) { $("#alpha").value = b.dataset.a; }
+    if (b.dataset.hp) { const hp = mode !== "hp"; mode = hp ? "hp" : "avg";
+      document.querySelectorAll(".seg button").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.mode === mode))); }
+    render(); }));
   let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 150); });
   render();
 })();

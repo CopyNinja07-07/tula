@@ -18,24 +18,39 @@ RES = ROOT / "experiments" / "results"
 OUT = ROOT / "docs" / "assets"
 
 # Palette: highway-sign green, brass of a market scale, verdict colours.
-STYLE = """
-<style>
-  :root{--bg:#f6f4ee;--ink:#17201b;--muted:#5d6b63;--line:#d3d8d2;--sign:#0b5d3b;--brass:#a8781f;
-        --charge:#1f7a45;--hold:#b7791f;--review:#b42318;--panel:#ffffff;--plate:#fbfbf5}
-  @media (prefers-color-scheme: dark){:root{--bg:#0f1512;--ink:#e8eee9;--muted:#9aa9a0;--line:#2b3832;
-        --sign:#1f9e66;--brass:#e0b04a;--charge:#3fb36f;--hold:#e0a43a;--review:#f0645a;--panel:#18201c;--plate:#ecece4}}
-  text{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;fill:var(--ink)}
-  .sans{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+FONTS = ROOT / "docs" / "assets" / "fonts"
+
+
+def _font(name: str, file: str) -> str:
+    """Embed a font as base64 so the SVG renders the same everywhere, GitHub included."""
+    import base64
+    data = base64.b64encode((FONTS / file).read_bytes()).decode()
+    return f'@font-face{{font-family:"{name}";src:url(data:font/woff2;base64,{data}) format("woff2");font-weight:100 900}}'
+
+
+# Palette: night road, lit by an emerald-to-lime gradient; amber and rose for hold and review.
+STYLE = ("<style>" + _font("TulaDisplay", "bricolage-grotesque.woff2") + _font("TulaMono", "geist-mono.woff2") + """
+  :root{--bg:#06100c;--ink:#ecf6f0;--muted:#93a99d;--line:#1d3329;--brass:#bef264;
+        --charge:#34d399;--hold:#fbbf24;--review:#fb7185;--sign:#10b981;--panel:#0f1d17;--plate:#ecece4}
+  @media (prefers-color-scheme: light){:root{--bg:#f4f8f5;--ink:#0a1711;--muted:#4b5f54;--line:#d5e3da;--brass:#65a30d;
+        --charge:#059669;--hold:#b45309;--review:#be123c;--sign:#047857;--panel:#ffffff;--plate:#fbfbf5}}
+  text{font-family:TulaMono,ui-monospace,"SF Mono",Menlo,monospace;fill:var(--ink)}
+  .sans{font-family:TulaDisplay,system-ui,-apple-system,"Segoe UI",sans-serif}
   .muted{fill:var(--muted)} .bg{fill:var(--bg)} .panel{fill:var(--panel);stroke:var(--line)}
-  .ink{stroke:var(--ink)} .brass{fill:var(--brass)} .sbrass{stroke:var(--brass)}
-  .charge{fill:var(--charge)} .hold{fill:var(--hold)} .review{fill:var(--review)} .sign{fill:var(--sign)}
-</style>"""
+  .ink{stroke:var(--ink)} .brass{fill:url(#tg)} .sbrass{stroke:url(#tg)}
+  .charge{fill:var(--charge)} .hold{fill:var(--hold)} .review{fill:var(--review)} .sign{fill:url(#tg)}
+</style>""")
+GRAD = ('<defs><linearGradient id="tg" x1="0" y1="0" x2="1" y2="0.3">'
+        '<stop offset="0" stop-color="#10b981"/><stop offset="0.5" stop-color="#6ee7b7"/><stop offset="1" stop-color="#bef264"/>'
+        '</linearGradient><radialGradient id="glow" cx="0.5" cy="0" r="0.9">'
+        '<stop offset="0" stop-color="#10b981" stop-opacity="0.22"/><stop offset="1" stop-color="#10b981" stop-opacity="0"/>'
+        '</radialGradient></defs>')
 
 
 def svg(w, h, body, title):
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" '
-            f'role="img" aria-label="{title}"><title>{title}</title>{STYLE}'
-            f'<rect class="bg" width="{w}" height="{h}" rx="14"/>{body}</svg>')
+            f'role="img" aria-label="{title}"><title>{title}</title>{STYLE}{GRAD}'
+            f'<rect class="bg" width="{w}" height="{h}" rx="14"/><rect width="{w}" height="{h}" rx="14" fill="url(#glow)"/>{body}</svg>')
 
 
 def kt(times, total):
@@ -189,7 +204,7 @@ def verdict_svg() -> str:
     t = r["table"]
     rows = [("Today's biller", "Today's biller (trust tag, else plate)", "var(--muted)"),
             ("One threshold (Glimmer ≥ 0.9)", "One threshold: Glimmer >= 0.9", "var(--hold)"),
-            ("TULA", "TULA (both readers + controller)", "var(--charge)")]
+            ("TULA", "TULA (both readers + controller)", "url(#tg)")]
     groups = [("clear", "Clear"), ("foggy", "Fog"), ("indian", "Indian set")]
     alpha = r["alpha"]
     x0, scale_w, top = 250, 540, 78
@@ -257,11 +272,11 @@ def redteam_svg() -> str:
     out.append(f'<polygon points="{poly}" style="fill:var(--brass)" opacity="0.08"/>')
     out.append(line("bound", "stroke:var(--brass)", 1.2, 0.2))
     out.append(line("naive_wrong", "stroke:var(--muted)", 1.4, 0.8))
-    out.append(line("tula_wrong", "stroke:var(--sign)", 1.4, 1.6))
+    out.append(line("tula_wrong", "stroke:var(--charge)", 1.4, 1.6))
     last = pts[-1]
     out.append(f'<text x="{X(0.3) - 6:.1f}" y="{Y(last["naive_wrong"]) - 10:.1f}" text-anchor="end" font-size="12" class="muted">today\'s biller {last["naive_wrong"]:.0%}</text>'
                f'<text x="{X(0.3) - 6:.1f}" y="{Y(last["bound"]) - 10:.1f}" text-anchor="end" font-size="12" style="fill:var(--brass)">bound {last["bound"]:.0%}</text>'
-               f'<text x="{X(0.3) - 6:.1f}" y="{Y(last["tula_wrong"]) + 22:.1f}" text-anchor="end" font-size="12" font-weight="700" style="fill:var(--sign)">TULA {last["tula_wrong"]:.1%}</text>')
+               f'<text x="{X(0.3) - 6:.1f}" y="{Y(last["tula_wrong"]) + 22:.1f}" text-anchor="end" font-size="12" font-weight="700" style="fill:var(--charge)">TULA {last["tula_wrong"]:.1%}</text>')
     return svg(W, H + 20, "".join(out), "Red team: TULA's wrong charges stay under the bound as attackers grow; today's biller does not")
 
 

@@ -78,7 +78,9 @@ def main() -> None:
                              c["group"], c["certified"], gread.get("image_issues"))
         out.append({
             "file": p["file"], "set": p["set"], "scenario": c["scenario"], "truth": p["truth"],
-            "img": thumb(BUNDLE / p["file"], parse_box(b.get("plate_box")), parse_box(b.get("vehicle_box"))),
+            # The Indian set states no licence, so its photos are not redistributed (reads only).
+            "img": None if p["set"] == "indian" else
+                   thumb(BUNDLE / p["file"], parse_box(b.get("plate_box")), parse_box(b.get("vehicle_box"))),
             "sam_plate": float(b["plate_score"]) if b.get("plate_score") else None,
             "a": p["a"], "b": {**p["b"], "image_issues": gread.get("image_issues", [])},
             "registry": p["reg"], "signals": {k: round(v, 2) for k, v in sig.items()},
